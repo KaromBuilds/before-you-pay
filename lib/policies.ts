@@ -38,13 +38,17 @@ export function unknownPolicy(store: string | null, today: string): PolicyNote {
 const norm = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
 
+const GENERIC = new Set(["the", "mexico", "mx", "oficial", "official", "tienda", "store", "online", "outdoor"]);
+
 export function findPolicy(store: string | null): PolicyNote | null {
   if (!store) return null;
   const s = norm(store);
   for (const p of POLICY_NOTES) {
     const key = norm(p.store.replace(/\(.*\)/, ""));
-    const first = key.split(" ").filter((w) => w.length > 2 && w !== "the");
-    if (s.includes(key) || (first.length && first.every((w) => s.includes(w)))) return p;
+    // Bug fix: "The North Face México" did not match a screenshot reading "The North Face",
+    // because the country suffix was required. Generic words no longer count.
+    const words = key.split(" ").filter((w) => w.length > 2 && !GENERIC.has(w));
+    if (s.includes(key) || (words.length && words.every((w) => s.includes(w)))) return p;
   }
   return null;
 }
