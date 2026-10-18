@@ -3,7 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import type { Category, Extraction, Item } from "@/lib/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const MODELS = (process.env.GEMINI_MODELS || "gemini-3.8-flash,gemini-3.6-flash").split(",").map((m) => m.trim()).filter(Boolean);
 const MAX_BYTES = 4 * 1024 * 1024;

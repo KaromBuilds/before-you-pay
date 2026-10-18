@@ -109,7 +109,15 @@ export default function Home() {
       const fd = new FormData();
       fd.append("image", blob, "checkout.jpg");
       const r = await fetch("/api/extract", { method: "POST", body: fd });
-      const j = await r.json();
+      // Bug fix: when the server function fails, Vercel returns an HTML/text error page and
+      // r.json() threw "Unexpected token 'A'…" at the user. Parse defensively.
+      const text = await r.text();
+      let j: { error?: string } & Partial<Extraction> = {};
+      try {
+        j = JSON.parse(text);
+      } catch {
+        j = { error: "The reader is busy or timed out. Try again in a moment, or use the offline demo." };
+      }
       if (r.status === 503 && j.error === "no_key") {
         setError("The AI reader isn't configured on this deployment, so we loaded the SIMULATED fictional demo instead.");
         setPreview(null);
