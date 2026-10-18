@@ -7,3 +7,8 @@
 - No real store policy is marked verified. Unknown stays unknown (Condition 2).
 - Without an API key the app runs a clearly labeled SIMULATED extraction on a fictional checkout.
 - Tomorrow's first move: deploy, run the persona test, fix the worst confusion.
+
+## Session 2 (2026-10-18)
+- Deploy 1 failed on Vercel: Next.js 15.5.4 was blocked as a vulnerable version. Upgraded to 15.5.28, rebuilt, tests pass, redeployed: live at https://before-you-pay-wine.vercel.app
+- GEMINI_API_KEY added as a Secret environment variable in Vercel (never in the repo). Redeploying so the real screenshot reader turns on.
+- Next: test a real checkout screenshot on the live URL, run the persona test, fix the worst confusion, redeploy.
