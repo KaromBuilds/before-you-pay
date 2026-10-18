@@ -102,7 +102,7 @@ If this slice works, Before You Pay becomes the buyer's personal fit and risk le
 |---|---|---|
 | Framework | Next.js 15 (App Router, TypeScript) | Same stack as my previous ships; one repo, one deploy |
 | Hosting | Vercel (free) | Auto-deploy on every push |
-| Vision + LLM | Google Gemini (`gemini-2.5-flash`) via `@google/genai`, server-side route | Free tier, reads screenshots, strict JSON output |
+| Vision + LLM | Google Gemini (`gemini-3.8-flash` (fallback `gemini-3.6-flash`)) via `@google/genai`, server-side route | Free tier, reads screenshots, strict JSON output |
 | **User-constraint data** | Fit memory (brand, size, outcome, one measured garment, wrist cm) in the browser's localStorage, with a "Delete all" button | Dragon Stack requirement without storing personal data on a server (Condition 5) |
 | Policy data | Small curated file `lib/policies.ts` + buyer-pasted policy text classified by keyword rules | Every finding shows source, check date, status (Condition 2) |
 | Logic | Deterministic rule engine `lib/rules.ts` | Exposure and warnings are explainable and testable, not LLM guesses |

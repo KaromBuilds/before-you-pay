@@ -5,6 +5,7 @@ import type { Category, Extraction, Item } from "@/lib/types";
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
+const MODELS = (process.env.GEMINI_MODELS || "gemini-3.8-flash,gemini-3.6-flash").split(",").map((m) => m.trim()).filter(Boolean);
 const MAX_BYTES = 4 * 1024 * 1024;
 const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp"]);
 
@@ -98,13 +99,23 @@ export async function POST(req: Request) {
   try {
     const data = Buffer.from(await file.arrayBuffer()).toString("base64");
     const ai = new GoogleGenAI({ apiKey: key });
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [{ role: "user", parts: [{ text: PROMPT }, { inlineData: { mimeType: file.type, data } }] }],
-      config: { responseMimeType: "application/json", responseSchema: schema, temperature: 0 },
-    });
-    const raw = JSON.parse(res.text ?? "{}");
-    return NextResponse.json(sanitize(raw));
+    // gemini-2.5-flash now returns 404 for new keys; try current Flash models in order.
+    let lastErr: unknown = null;
+    for (const model of MODELS) {
+      try {
+        const res = await ai.models.generateContent({
+          model,
+          contents: [{ role: "user", parts: [{ text: PROMPT }, { inlineData: { mimeType: file.type, data } }] }],
+          config: { responseMimeType: "application/json", responseSchema: schema, temperature: 0 },
+        });
+        const raw = JSON.parse(res.text ?? "{}");
+        return NextResponse.json(sanitize(raw));
+      } catch (e) {
+        lastErr = e;
+        console.error(`extract failed on ${model}`, e instanceof Error ? e.message.slice(0, 200) : e);
+      }
+    }
+    throw lastErr;
   } catch (e) {
     console.error("extract failed", e instanceof Error ? e.message : e);
     return NextResponse.json({ error: "We couldn't read that screenshot. Try a clearer one or use the demo." }, { status: 502 });
