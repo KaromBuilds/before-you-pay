@@ -25,9 +25,11 @@ A Mexican online clothing buyer, 18–35, who shops from the phone and often buy
 
 ## 4. Mockup (image-generated)
 
-`docs/mockup.png`, generated with my LLM's image generation from this prompt:
+![Mockup](mockup.png)
 
-> *Mobile web app screen, clean and calm, white background, navy accents. Title "Before You Pay". At the top, a checkout screenshot thumbnail. Below it, an editable table of two jackets (name, brand, size L, price paid in MXN). Then two big number cards side by side: "Amount paid MX$6,565" and "Conditional exposure MX$6,565 — returns not confirmed". Then amber warning cards: "Last time L in this brand was too big for you", "Discount may remove your return option", "Two similar items in cart". Each warning has a small source and date tag that reads "unverified" or "advertised". At the bottom, two buttons: "I'll wait" (primary) and "Buy anyway — my call" (secondary). No product recommendations, no ads.*
+Generated with my LLM's image generation (`docs/mockup.png`) from this prompt:
+
+> *Generate an image: a mobile web app screen mockup, clean and calm, white background, navy blue accents, phone portrait format. App title at the top: "Before You Pay". Under it, a small thumbnail of an online checkout screenshot. Then an orange summary card with big red text "MX$6,565" and the line "at risk if the size fails · See why". Below, an editable table with two puffer jackets: name, brand, size "L", price paid in MXN. Then two number cards side by side: "Amount you'd pay MX$6,565" and "Money at risk if the size fails MX$6,565". Then three warning cards with red and amber left borders: "L was too big for you in this brand before", "Discounted items here can't be returned", "Two similar items in the cart". Each warning has a small tag reading "advertised" or "unverified". At the bottom, two buttons: "I'll wait" (filled navy, primary) and "Buy anyway — my call" (outlined). No product recommendations, no ads, no store logos. Flat UI design, realistic app mockup.*
 
 ## 5. The flow (Mermaid)
 
