@@ -208,13 +208,23 @@ export default function Home() {
           </label>
           <button
             className="btn"
+            disabled={busy}
+            onClick={async () => {
+              const b = await fetch("/sample-checkout.png").then((r) => r.blob());
+              onFile(new File([b], "sample-checkout.png", { type: "image/png" }));
+            }}
+          >
+            Try a sample screenshot (fictional store)
+          </button>
+          <button
+            className="btn small"
             onClick={() => {
               setError(null);
               setPreview(null);
               start({ ...DEMO_EXTRACTION, checkedAt: today() });
             }}
           >
-            Try the fictional demo
+            Offline demo (no AI)
           </button>
         </div>
         {error && <p className="err">{error}</p>}
