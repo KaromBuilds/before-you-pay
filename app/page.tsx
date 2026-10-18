@@ -236,6 +236,17 @@ export default function Home() {
           </button>
         </div>
         {error && <p className="err">{error}</p>}
+        {/* Persona-test fix: results were 6 screens below the upload, so a hurried buyer saw "nothing happen" and quit.
+            Show the answer right where she is looking. */}
+        {analysis && (
+          <a className="summary" href="#results">
+            <span className="sum-big">{mxn(analysis.conditionalExposure)}</span>
+            <span className="sum-txt">
+              at risk if the size fails · {analysis.warnings.filter((w) => w.level === "high").length} high warning(s)
+            </span>
+            <span className="sum-link">See why ↓</span>
+          </a>
+        )}
         {preview && <img className="thumb" src={preview} alt="Your checkout screenshot" />}
       </section>
 
@@ -439,7 +450,9 @@ export default function Home() {
               <div className="policy">
                 <div>
                   <b>{policy.store}</b>
-                  <span className={`badge ${policy.status}`}>{policy.status}</span>
+                  <span className={`badge ${policy.status}`}>
+                    {policy.status} · {policy.status === "advertised" ? "the store's own words" : policy.status === "supported" ? "independently confirmed" : "not confirmed"}
+                  </span>
                 </div>
                 <div>
                   Regular items: <Ret r={policy.regularReturnable} /> · Discounted items: <Ret r={policy.discountedReturnable} />
@@ -468,7 +481,7 @@ export default function Home() {
 
           {/* RESULTS */}
           {analysis && (
-            <section className="card result">
+            <section className="card result" id="results">
               <h2>What&apos;s at stake</h2>
               <div className="nums">
                 <div className="numcard">
@@ -477,10 +490,10 @@ export default function Home() {
                   <div className="small">{analysis.amountPaidSource === "unknown" ? "Some prices are not visible — fill them in above." : `From the ${analysis.amountPaidSource}`}</div>
                 </div>
                 <div className={`numcard ${analysis.conditionalExposure > 0 ? "warn" : "okc"}`}>
-                  <div className="lbl">Conditional exposure</div>
+                  <div className="lbl">Money at risk if the size fails</div>
                   <div className="big">{mxn(analysis.conditionalExposure)}</div>
                   <div className="small">
-                    Money you could be stuck with if the size fails.
+                    Conditional exposure: what you&apos;d keep if it doesn&apos;t fit and the return isn&apos;t accepted.
                     {analysis.confirmedNonReturnable > 0 && <> {mxn(analysis.confirmedNonReturnable)} confirmed not returnable.</>}
                     {analysis.unconfirmed > 0 && <> {mxn(analysis.unconfirmed)} returns not confirmed.</>}
                   </div>
