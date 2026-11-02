@@ -30,6 +30,11 @@
 - **Client secret:** the founder pasted the OAuth client secret into Supabase → Google himself. Verified: provider on, client ID and a `GOCSPX-` secret stored.
 - **Supabase URL + publishable key in code (`lib/supabase.ts`) instead of Vercel env vars.** Both are public by design: they ship to every browser in the page's JavaScript either way, and RLS is what protects the rows. The secret / service_role key is never in the repo, the app or Vercel. The only real secret, `GEMINI_API_KEY`, stays in Vercel env (security floor #1). The Site URL in Supabase was left untouched because other apps share this project.
 
+## Session 1, end-to-end test on the real domain (2026-11-01)
+- **T11:** on https://beforeyoupay.xyz/product?sample=1, choosing "I'll wait" without signing in shows "Sign in with Google to save"; nothing is written.
+- **T12:** Sign in with Google (consent screen "Before You Pay") → the check restored after the redirect → "Save to my history" → "Saved." → /history shows *Cumbre Outdoor (fictional) · MX$6,565 at risk · Waited*, and the North Star reads **MX$6,565 pesos kept**.
+- **T13 (RLS):** with only the public key and no session, `GET /rest/v1/byp_checks` returns `[]` (the saved row is invisible), and an anonymous `POST` is rejected with `401 / 42501 new row violates row-level security policy`.
+
 ## Tomorrow's first move
-- After the two secrets are in: redeploy, sign in on the live domain, save a check, confirm it appears in /history, then confirm with a second Google account that RLS hides it (T12–T13). Record the demo.
+- Record the demo on beforeyoupay.xyz, then start Week 13: five real users, beginning with Spanish-speaking buyers like Rocío (the English UI is the first risk to test).
 
