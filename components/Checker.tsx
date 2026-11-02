@@ -47,7 +47,7 @@ const RET: Record<Returnable, [string, string]> = {
   unknown: ["not confirmed", "bg-warn-bg text-warn"],
 };
 const Pill = ({ r }: { r: Returnable }) => (
-  <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${RET[r][1]}`}>{RET[r][0]}</span>
+  <span className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${RET[r][1]}`}>{RET[r][0]}</span>
 );
 
 const FLAG_STYLE: Record<Flag["level"], string> = {
@@ -190,7 +190,7 @@ export default function Checker() {
     ) : v == null || v === "" ? (
       <span className="text-[11px] font-semibold text-warn">not visible</span>
     ) : (
-      <span className="text-[11px] text-mute">{ex?.source === "simulated" ? "simulated" : "read"}</span>
+      <span className="text-[11px] text-mute">{ex?.source === "simulated" ? "" : "read"}</span>
     );
 
   const input = "w-full rounded-lg border border-line bg-white px-2.5 py-2 text-sm focus:border-navy focus:outline-none";
@@ -200,12 +200,14 @@ export default function Checker() {
       <div>
         <h1 className="text-2xl font-extrabold text-navy sm:text-3xl">Check before you pay</h1>
         <p className="mt-1 text-mute">Upload a screenshot of your cart or payment screen. We read it and never keep the image.</p>
+        <p className="mt-1 text-sm font-semibold text-ok">No account needed to check.</p>
       </div>
 
       <Card>
         <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line px-4 py-8 text-center hover:border-navy">
           <span className="text-base font-semibold text-navy">{busy ? "Reading your checkout…" : "Upload checkout screenshot"}</span>
-          <span className="text-xs text-mute">PNG, JPG or WEBP · from any store</span>
+          <span className="text-xs text-mute">The screen with your cart and the total · any store</span>
+          <span className="text-xs text-mute">iPhone: side button + volume up · Android: power + volume down</span>
           <input
             type="file"
             accept="image/png,image/jpeg,image/webp"
@@ -256,6 +258,58 @@ export default function Checker() {
             </p>
           </Card>
 
+          {result.flags.length > 0 && (
+            <Card>
+              <h2 className="font-bold text-navy">What’s pushing this purchase</h2>
+              <ul className="mt-3 space-y-2">
+                {result.flags.map((f) => (
+                  <li key={f.id} className={`rounded-lg border-l-4 px-3 py-2 text-sm ${FLAG_STYLE[f.level]}`}>
+                    <b className="block">{f.title}</b>
+                    <span className="text-mute">{f.detail}</span>
+                    <span className="mt-1 block font-semibold text-navy">Next step: {f.nextStep}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+          <Card>
+            <h2 className="font-bold text-navy">Your call</h2>
+            <p className="text-sm text-mute">We never place an order and never tell you what to buy.</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              {DECISIONS.map(([d, label]) => (
+                <button
+                  key={d}
+                  onClick={() => { setDecision(d); setSaveState("idle"); }}
+                  className={`rounded-xl border px-3 py-3 text-sm font-semibold ${decision === d ? "border-navy bg-navy text-white" : "border-navy text-navy hover:bg-paper"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {decision && (
+              <div className="mt-4 rounded-xl bg-paper p-3 text-sm">
+                {saveState === "saved" ? (
+                  <p>Saved. <Link href="/history" className="font-semibold text-navy underline">See my history</Link></p>
+                ) : (
+                  <>
+                    <p className="text-mute">
+                      {user
+                        ? "Save this check to your private history. We save the item names, sizes, prices, result and your choice. Never the screenshot."
+                        : "Want to keep this? Sign in with Google to save it to a private history only you can see. We never save the screenshot."}
+                    </p>
+                    <button
+                      onClick={save}
+                      disabled={saveState === "saving"}
+                      className="mt-2 rounded-lg bg-navy px-4 py-2 font-semibold text-white disabled:opacity-50"
+                    >
+                      {saveState === "saving" ? "Saving…" : user ? "Save to my history" : "Sign in with Google to save"}
+                    </button>
+                    {saveState === "error" && <p className="mt-2 text-warn">{saveMsg}</p>}
+                  </>
+                )}
+              </div>
+            )}
+          </Card>
           <Card>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-bold text-navy">{rule.store}: return rule</h2>
@@ -295,23 +349,13 @@ export default function Checker() {
             </details>
           </Card>
 
-          {result.flags.length > 0 && (
-            <Card>
-              <h2 className="font-bold text-navy">What’s pushing this purchase</h2>
-              <ul className="mt-3 space-y-2">
-                {result.flags.map((f) => (
-                  <li key={f.id} className={`rounded-lg border-l-4 px-3 py-2 text-sm ${FLAG_STYLE[f.level]}`}>
-                    <b className="block">{f.title}</b>
-                    <span className="text-mute">{f.detail}</span>
-                    <span className="mt-1 block font-semibold text-navy">Next step: {f.nextStep}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          )}
 
           <Card>
-            <h2 className="font-bold text-navy">What we read <span className="text-sm font-normal text-mute">· fix anything that’s wrong</span></h2>
+            <details open={ex.items.some((i) => !i.size || i.paidPrice == null)}>
+            <summary className="cursor-pointer font-bold text-navy">
+              What we read: {ex.items.length} item{ex.items.length === 1 ? "" : "s"}{" "}
+              <span className="text-sm font-normal text-mute">· tap to check or fix</span>
+            </summary>
             <label className="mt-3 block text-xs text-mute">
               Store {st("store", ex.store)}
               <input
@@ -368,46 +412,9 @@ export default function Checker() {
               })}
             </div>
             {ex.discountCodes.length > 0 && <p className="mt-2 text-xs text-mute">Codes read: {ex.discountCodes.join(", ")}</p>}
+            </details>
           </Card>
 
-          <Card>
-            <h2 className="font-bold text-navy">Your call</h2>
-            <p className="text-sm text-mute">We never place an order and never tell you what to buy.</p>
-            <div className="mt-3 grid gap-2 sm:grid-cols-3">
-              {DECISIONS.map(([d, label]) => (
-                <button
-                  key={d}
-                  onClick={() => { setDecision(d); setSaveState("idle"); }}
-                  className={`rounded-xl border px-3 py-3 text-sm font-semibold ${decision === d ? "border-navy bg-navy text-white" : "border-navy text-navy hover:bg-paper"}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            {decision && (
-              <div className="mt-4 rounded-xl bg-paper p-3 text-sm">
-                {saveState === "saved" ? (
-                  <p>Saved. <Link href="/history" className="font-semibold text-navy underline">See my history</Link></p>
-                ) : (
-                  <>
-                    <p className="text-mute">
-                      {user
-                        ? "Save this check to your private history. We save the item names, sizes, prices, result and your choice. Never the screenshot."
-                        : "Want to keep this? Sign in with Google to save it to a private history only you can see. We never save the screenshot."}
-                    </p>
-                    <button
-                      onClick={save}
-                      disabled={saveState === "saving"}
-                      className="mt-2 rounded-lg bg-navy px-4 py-2 font-semibold text-white disabled:opacity-50"
-                    >
-                      {saveState === "saving" ? "Saving…" : user ? "Save to my history" : "Sign in with Google to save"}
-                    </button>
-                    {saveState === "error" && <p className="mt-2 text-warn">{saveMsg}</p>}
-                  </>
-                )}
-              </div>
-            )}
-          </Card>
         </div>
       )}
     </div>

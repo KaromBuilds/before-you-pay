@@ -41,7 +41,7 @@ export default function AuthButton() {
     );
   return (
     <button onClick={signIn} className="rounded-full border border-navy px-3 py-1.5 text-xs font-semibold text-navy hover:bg-navy hover:text-white">
-      Sign in with Google
+      Sign in
     </button>
   );
 }
