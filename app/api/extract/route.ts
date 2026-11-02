@@ -103,6 +103,7 @@ export async function POST(req: Request) {
     const ai = new GoogleGenAI({ apiKey: key });
         let lastErr: unknown = null;
     const budgets = [22_000, 30_000];
+    const t0 = Date.now();
     for (const [n, model] of MODELS.slice(0, 2).entries()) {
       try {
         const res = await ai.models.generateContent({
@@ -116,9 +117,12 @@ export async function POST(req: Request) {
           },
         });
         const raw = JSON.parse(res.text ?? "{}");
-        return NextResponse.json(sanitize(raw));
+        const ms = Date.now() - t0;
+        console.info(`extract ok model=${model} ms=${ms}`);
+        return NextResponse.json(sanitize(raw), { headers: { "x-read-by": model, "x-read-ms": String(ms) } });
       } catch (e) {
         lastErr = e;
+        console.error(`extract slow/failed model=${model} ms=${Date.now() - t0}`);
         console.error(`extract failed on ${model}`, e instanceof Error ? e.message.slice(0, 200) : e);
       }
     }
