@@ -36,11 +36,11 @@ flowchart TD
     A[Buyer is on a checkout, about to pay] --> B[Takes a screenshot]
     B --> C[Uploads it on /product]
     C --> D[Browser resizes and validates the image]
-    D --> E[/api/extract: Gemini vision reads ONLY visible fields as strict JSON]
+    D --> E["api/extract: Gemini vision reads ONLY visible fields as strict JSON"]
     E --> F[Server sanitizes: lengths, numbers, max 20 items]
     F --> G[Editable line items: buyer fixes anything]
     G --> H[Step-5 engine: deterministic rules]
-    I[(Curated return-rule table: source, check date, status)] --> H
+    I[("Curated return-rule table: source, check date, status")] --> H
     J[Return wording visible on the screenshot] --> H
     H --> K[Money at risk: final sale + return not confirmed]
     H --> L[Pressure flags, each with one next step]
@@ -48,8 +48,8 @@ flowchart TD
     L --> M
     M -- wait / change size / buy anyway --> N{Signed in with Google?}
     N -- no --> O[Result stays on screen only; offer to sign in to save]
-    N -- yes --> P[(Supabase byp_checks, RLS: only the owner's rows)]
-    P --> Q[/history: list, North Star 'pesos kept', delete]
+    N -- yes --> P[("Supabase byp_checks · RLS: owner-only rows")]
+    P --> Q["History page: list, North Star (pesos kept), delete"]
 ```
 
 ### Swimlane: who does what

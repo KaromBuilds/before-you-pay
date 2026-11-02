@@ -22,3 +22,12 @@
 - **Third confusion (fixed):** she didn't know what a "checkout screenshot" was or how to take one. **Fix:** the upload box now says "The screen with your cart and the total" and shows the screenshot buttons for iPhone and Android.
 - Also fixed: the "final sale" pill broke over two lines; the word "simulated" appeared on every field (it's now shown once, in the banner).
 - Logged, not fixed: the UI is in English (a course requirement) while Rocío reads Spanish. This is the first thing to test with real users in Week 13.
+
+## Session 1, domain + data layer (2026-11-01)
+- **Real domain live:** `beforeyoupay.xyz`, bought on Vercel (auto-renew off) and attached to Production. Valid Configuration; https://beforeyoupay.xyz/product serves the latest deploy.
+- Supabase (`semestre` project): `byp_checks` created with RLS; redirect URLs added for the domain and the vercel.app URL.
+- Google sign-in: a dedicated Google Cloud project, "Before You Pay," so the consent screen shows the venture's name. It has a web OAuth client with the Supabase callback, branding links (home / privacy / about), authorized domain beforeyoupay.xyz, and is published to production. The client ID and the provider toggle are set in Supabase.
+- **Pending (founder action, secrets):** paste the OAuth client secret in Supabase → Google, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in Vercel. Until then, the check works for everyone and saving shows "Saving isn't configured on this deployment yet."
+
+## Tomorrow's first move
+- After the two secrets are in: redeploy, sign in on the live domain, save a check, confirm it appears in /history, then confirm with a second Google account that RLS hides it (T12–T13). Record the demo.
