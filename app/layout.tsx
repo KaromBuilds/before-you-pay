@@ -33,6 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <span>No store pays us. No affiliate links. We never recommend a product.</span>
             <span className="flex gap-3">
               <Link href="/about" className="hover:text-navy">About</Link>
+              <Link href="/privacy" className="hover:text-navy">Privacy</Link>
               <a href="https://github.com/KaromBuilds/before-you-pay" className="hover:text-navy">Code</a>
             </span>
           </div>
