@@ -1,82 +1,79 @@
 export type Category = "apparel" | "footwear" | "accessory" | "other";
 
+/** Line item: one product row read from the checkout screenshot. Every field is editable by the buyer. */
 export interface Item {
   id: string;
   name: string;
   brand: string;
   size: string;
   category: Category;
-  listPrice: number | null; // price before discount, MXN
-  paidPrice: number | null; // price after discount, MXN (per unit)
+  listPrice: number | null; // unit price before discount, MXN
+  paidPrice: number | null; // unit price actually charged, MXN
   qty: number;
-  sizeHasCm: boolean | null; // does the listing give centimeters for the size?
+  sizeHasCm?: boolean | null;
 }
 
+/** What the vision reader saw. The screenshot itself is never stored. */
 export interface Extraction {
   store: string | null;
   items: Item[];
   discountCodes: string[];
   shipping: number | null;
   total: number | null;
-  returnTermsVisible: string | null; // return/exchange text visible on the screenshot, verbatim
-  pressureCues: string[]; // e.g. "Only 2 left", "Offer ends in 01:59:00"
+  returnTermsVisible: string | null;
+  pressureCues: string[];
   source: "screenshot" | "simulated";
-  checkedAt: string; // ISO date
-}
-
-export type Outcome = "fit" | "too_big" | "too_small";
-
-export interface FitRecord {
-  id: string;
-  brand: string;
-  category: Category;
-  size: string;
-  outcome: Outcome;
-}
-
-export interface Reference {
-  chestCm: number | null; // flat chest width of one garment that fits
-  lengthCm: number | null; // length of that garment
-  wristCm: number | null; // wrist circumference (paper strip)
+  checkedAt: string;
 }
 
 export type Returnable = "yes" | "no" | "unknown";
-export type EvidenceStatus = "advertised" | "supported" | "unverified";
+/** advertised = the store's own words; unverified = we could not read the store's own words. Nothing is ever "verified" here. */
+export type EvidenceStatus = "advertised" | "unverified";
 
-export interface PolicyNote {
+/** Return rule: what a store's own text says, with its source and check date. */
+export interface ReturnRule {
   store: string;
+  aliases?: string[];
   regularReturnable: Returnable;
   discountedReturnable: Returnable;
+  windowDays: number | null;
+  costNote: string | null;
   status: EvidenceStatus;
   source: string;
+  sourceUrl: string | null;
   checkedAt: string;
   note: string;
 }
 
-export type Level = "high" | "medium" | "low" | "info";
+export type Level = "high" | "medium" | "info";
 
-export interface Warning {
-  itemId: string | null; // null = cart-level
+/** Pressure flag or risk flag. Team 8 Condition 5: every flag ends in exactly one next step. */
+export interface Flag {
+  id: string;
   level: Level;
   title: string;
   detail: string;
+  nextStep: string;
 }
 
-export interface ItemExposure {
+export interface ItemRisk {
   itemId: string;
   amount: number;
   discounted: boolean;
   returnable: Returnable;
 }
 
-export interface Analysis {
+export interface Result {
   amountPaid: number | null;
   amountPaidSource: "total on screenshot" | "sum of items" | "unknown";
-  confirmedNonReturnable: number;
-  unconfirmed: number;
-  conditionalExposure: number;
-  perItem: ItemExposure[];
-  warnings: Warning[];
-  reasonsToWait: string[];
-  policy: PolicyNote;
+  /** Money at risk = confirmed final sale + return not confirmed. */
+  moneyAtRisk: number;
+  finalSale: number;
+  notConfirmed: number;
+  perItem: ItemRisk[];
+  flags: Flag[];
+  nextStep: string;
+  rule: ReturnRule;
 }
+
+export type Decision = "wait" | "change_size" | "buy_anyway";
