@@ -27,13 +27,9 @@
 - **Real domain live:** `beforeyoupay.xyz`, bought on Vercel (auto-renew off) and attached to Production. Valid Configuration; https://beforeyoupay.xyz/product serves the latest deploy.
 - Supabase (`semestre` project): `byp_checks` created with RLS; redirect URLs added for the domain and the vercel.app URL.
 - Google sign-in: a dedicated Google Cloud project, "Before You Pay," so the consent screen shows the venture's name. It has a web OAuth client with the Supabase callback, branding links (home / privacy / about), authorized domain beforeyoupay.xyz, and is published to production. The client ID and the provider toggle are set in Supabase.
-- **Pending (founder action, secrets):** paste the OAuth client secret in Supabase → Google, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in Vercel. Until then, the check works for everyone and saving shows "Saving isn't configured on this deployment yet."
+- **Client secret:** the founder pasted the OAuth client secret into Supabase → Google himself. Verified: provider on, client ID and a `GOCSPX-` secret stored.
+- **Supabase URL + publishable key in code (`lib/supabase.ts`) instead of Vercel env vars.** Both are public by design: they ship to every browser in the page's JavaScript either way, and RLS is what protects the rows. The secret / service_role key is never in the repo, the app or Vercel. The only real secret, `GEMINI_API_KEY`, stays in Vercel env (security floor #1). The Site URL in Supabase was left untouched because other apps share this project.
 
 ## Tomorrow's first move
 - After the two secrets are in: redeploy, sign in on the live domain, save a check, confirm it appears in /history, then confirm with a second Google account that RLS hides it (T12–T13). Record the demo.
 
-## Session 1, data layer (2026-11-01)
-- Supabase project: the existing free-tier project `semestre` (the free plan allows only two active projects). New table `byp_checks` created from `supabase/schema.sql`: RLS on, owner-only select/insert/delete, no update, CHECK constraints on every field.
-- **Sign in with Google:** created a Google Cloud project "Before You Pay" with an OAuth consent screen (External, in production, basic scopes only) and a web client whose only redirect URI is the Supabase callback. Google provider enabled in Supabase. Redirect allow-list: `https://beforeyoupay.xyz/**` and the Vercel URL. Site URL left untouched because other apps share this project.
-- **Supabase URL + publishable key in code (`lib/supabase.ts`) instead of Vercel env vars.** Both are public by design: they ship to every browser in the page's JavaScript either way, and RLS is what protects the rows. The secret / service_role key is never in the repo, the app or Vercel. The only secret, `GEMINI_API_KEY`, stays in Vercel env (security floor #1).
-- **Real domain:** `beforeyoupay.xyz`, bought on Vercel (US$1.99, auto-renew off) and connected to the project as Production.
