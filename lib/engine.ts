@@ -98,16 +98,22 @@ export function analyze(ex: Extraction, rule: ReturnRule): Result {
   }
 
   // 4. Duplicates / several units
+  // Bug fix (Week 12 test pass): "Hooded Thermal Puffer Jacket" + "Thermal Puffer Jacket" was reported as
+  // '"Hooded Thermal Puffer Jacket" appears twice'. Only identical names are "twice"; similar ones are named as a pair.
   const dupes: string[] = [];
   for (let i = 0; i < ex.items.length; i++)
-    for (let j = i + 1; j < ex.items.length; j++) if (similar(ex.items[i], ex.items[j])) dupes.push(ex.items[i].name);
+    for (let j = i + 1; j < ex.items.length; j++) {
+      const a = ex.items[i], b = ex.items[j];
+      if (!similar(a, b)) continue;
+      dupes.push(a.name.trim().toLowerCase() === b.name.trim().toLowerCase() ? `"${a.name}" appears twice` : `"${a.name}" and "${b.name}" are very similar`);
+    }
   const multi = ex.items.filter((i) => i.qty > 1);
   if (dupes.length || multi.length) {
     flags.push({
       id: "duplicates",
       level: "medium",
-      title: "Same item more than once",
-      detail: [...new Set(dupes)].map((d) => `"${d}" appears twice`).concat(multi.map((i) => `${i.qty} × "${i.name}"`)).join("; ") + ". If the size is wrong, it's wrong for all of them.",
+      title: "Same or very similar items",
+      detail: [...new Set(dupes)].concat(multi.map((i) => `${i.qty} × "${i.name}"`)).join("; ") + ". If the size is wrong, it's wrong for all of them.",
       nextStep: "Buy one, check the fit at home, then buy the rest.",
     });
   }

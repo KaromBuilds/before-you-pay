@@ -102,3 +102,11 @@ test("saved row holds no image and is clipped", () => {
   assert.ok(!("image" in row));
   assert.throws(() => toRow(pants, r, "hack" as never));
 });
+
+test("bug fix: similar but different items are named as a pair, not 'twice'", () => {
+  const f = analyze(DEMO_EXTRACTION, cumbre).flags.find((x) => x.id === "duplicates")!;
+  assert.ok(f.detail.includes('"Hooded Thermal Puffer Jacket" and "Thermal Puffer Jacket" are very similar'));
+  assert.ok(!f.detail.includes("appears twice"));
+  const g = analyze(pants, zara).flags.find((x) => x.id === "duplicates")!;
+  assert.ok(g.detail.includes('"Wide-leg pants" appears twice'));
+});
