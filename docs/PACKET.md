@@ -1,35 +1,31 @@
-# PACKET — Before You Pay (Week 10 · Business Bending)
+# PACKET — Before You Pay (Week 12 · Core Build)
 
-**Builder:** Asael González (Team 7 · Technologist this week)
-**Blueprint:** Team 7, Week 10. Primary vacuum: **Regret prevention**
-**My declaration:** build screenshot extraction, editable fields and conditional exposure / fit warnings. It honors Conditions **2** and **3**.
+**Founder:** Karom Asael González Martínez · Team 8 · Adversary this week
+**Venture:** Before You Pay, rebuilt from my Week 10 ship (Regret vacuum). See [`CHARTER.md`](CHARTER.md) and [`PERSONAS.md`](PERSONAS.md).
+**Engine sentence:** *Step 5 of my Method becomes the function that turns the checkout screenshot a buyer already has into the pesos she would lose if it doesn't fit, under that store's real return rule, before she pays.*
+**Team 8 Blueprint conditions this build must honor:** (1) the AI never decides · (2) no false certainty · (3) **shadow clause:** the party the user decides against can never pay to shape the answer · (4) store the minimum, Google sign-in and RLS · (5) every warning ends in one next step.
 
 ---
 
 ## 1. Problem, in my words
 
-Online clothing stores in Mexico are built to make you pay fast. The discount code, the "last units" banner and the one-click checkout all push toward the purchase. The two things that would stop a bad purchase never show up at the moment you pay:
-
-1. **Will this size fit me in *this* brand?** I'm an L in some brands and an M in others.
-2. **What happens if it doesn't fit?** The rule that discounted items can't be returned isn't on the checkout screen.
-
-I paid MX$6,565 for two discounted jackets in size L. Both were too big. The store refused the return because of the discount, so I bought replacements at full price on installments. The return-rate statistic never counted my regret, because I wasn't allowed to return anything.
+Online clothing stores in Mexico are designed so you pay fast. The discount code, the "last units" banner and the one-tap checkout all push toward paying. The one fact that would stop a bad purchase isn't on the checkout screen: **what happens to your money if the size is wrong.** I paid MX$6,565 for two discounted jackets, both too big, and the discount meant I couldn't return them. This month my mother bought two pairs of Zara pants online with a guessed size. Nobody shows the buyer the money at risk before she pays, and return statistics never count the regret that was never allowed to be returned.
 
 ## 2. Exact user
 
-A Mexican online clothing buyer, 18–35, who shops from the phone and often buys **on discount, inside a short window**, without trying the item on. They know which brands have fit them before but keep that knowledge in their head, not in a tool. **They are about to pay right now.** They are not a researcher, a store, or a stylist.
+An adult in Mexico buying clothes or shoes online from a phone, **at the moment before paying**, with a guessed size and often a discount code. Personas: **Rocío, 51** (buys for her family on Zara, reads slowly, distrusts apps) and **Diego, 21** (discount codes, installments, in a hurry). Not a store, not a stylist.
 
 ## 3. Success definition
 
-> Before the module closes, a buyer can upload a checkout screenshot (or use the labeled fictional demo) and, in under a minute, see: every item, size and price read from the image and **editable**; the **amount paid** separated from the **conditional exposure** (money stuck if the size fails and the return isn't confirmed); a **fit warning per item** based on their own fit memory; the **source, check date and status** of every return-policy finding; and a **"Wait" or "Buy anyway, my call"** choice. The app never places an order. All of this works at a live URL.
+> Before the module closes, at the venture's real domain, a buyer can upload a checkout screenshot (or the labeled fictional sample) and in under a minute see: every line item **read and editable**; **money at risk if the size fails**, split into *confirmed final sale* and *return not confirmed*; **the store's return rule with its source and check date**; **pressure flags, each with one next step**; and then choose **wait / change size first / buy anyway (my call)**. After signing in with Google, the check and the decision are **saved** to the buyer's own history, which only they can see and delete.
 
-## 4. Mockup (image-generated)
+## 4. Mockup
 
 ![Mockup](mockup.png)
 
-Generated with my LLM's image generation (`docs/mockup.png`) from this prompt:
+`docs/mockup.png` is the target phone screen. Image-generation prompt (for regenerating it in my LLM's image tool):
 
-> *Generate an image: a mobile web app screen mockup, clean and calm, white background, navy blue accents, phone portrait format. App title at the top: "Before You Pay". Under it, a small thumbnail of an online checkout screenshot. Then an orange summary card with big red text "MX$6,565" and the line "at risk if the size fails · See why". Below, an editable table with two puffer jackets: name, brand, size "L", price paid in MXN. Then two number cards side by side: "Amount you'd pay MX$6,565" and "Money at risk if the size fails MX$6,565". Then three warning cards with red and amber left borders: "L was too big for you in this brand before", "Discounted items here can't be returned", "Two similar items in the cart". Each warning has a small tag reading "advertised" or "unverified". At the bottom, two buttons: "I'll wait" (filled navy, primary) and "Buy anyway — my call" (outlined). No product recommendations, no ads, no store logos. Flat UI design, realistic app mockup.*
+> *Generate an image: a realistic mobile web app mockup, phone portrait, calm white background with deep navy and warm amber accents. Top bar: "Before You Pay" and a small "Sign in with Google" button. A small thumbnail of a clothing checkout screenshot. Below it, a big summary card: red number "MX$1,698" and the line "at risk if the size fails", with two smaller lines: "MX$1,698 return not confirmed" and "MX$0 final sale". A card titled "Zara México — return rule" with "30 days · discounted items: not stated · source zara.com/mx · checked 2026-11-01". Two editable item rows: "Wide-leg pants · size 32 · MX$849" twice. Three flag cards with a left color border, each ending in a bold "Next step:" line: "Same item twice in the cart", "Return rule for sale items not confirmed", "Countdown on the checkout". Bottom: three buttons, "I'll wait" (filled navy), "I'll change the size first", "Buy anyway — my call" (outlined), and a small "Save to my history". No ads, no product suggestions, no store logos. Flat, clean UI.*
 
 ## 5. The flow (Mermaid)
 
@@ -37,25 +33,23 @@ Generated with my LLM's image generation (`docs/mockup.png`) from this prompt:
 
 ```mermaid
 flowchart TD
-    A[Buyer reaches checkout] --> B[Takes a screenshot]
-    B --> C[Uploads it to Before You Pay]
-    C --> D{API key configured?}
-    D -- yes --> E[Gemini vision extracts items, sizes, prices, codes, visible return text, pressure cues]
-    D -- no --> F[Labeled SIMULATED demo extraction]
-    E --> G[Editable fields: buyer corrects anything]
-    F --> G
-    G --> H[Rule engine]
-    I[(Fit memory on this device: brand, size, outcome + one measured garment / wrist)] --> H
-    J[(Return-policy notes: source, check date, status)] --> H
-    K[Buyer may paste the store's policy text] --> J
-    H --> L[Amount paid vs. conditional exposure]
-    H --> M[Fit warnings per item, never a guarantee]
-    H --> N[Pressure flags + reasons to wait]
-    L --> O{Buyer decides}
-    M --> O
-    N --> O
-    O -- I'll wait --> P[Nothing happens; decision noted only on this device]
-    O -- Buy anyway --> Q[Buyer returns to the store; app never places an order]
+    A[Buyer is on a checkout, about to pay] --> B[Takes a screenshot]
+    B --> C[Uploads it on /product]
+    C --> D[Browser resizes and validates the image]
+    D --> E[/api/extract: Gemini vision reads ONLY visible fields as strict JSON]
+    E --> F[Server sanitizes: lengths, numbers, max 20 items]
+    F --> G[Editable line items: buyer fixes anything]
+    G --> H[Step-5 engine: deterministic rules]
+    I[(Curated return-rule table: source, check date, status)] --> H
+    J[Return wording visible on the screenshot] --> H
+    H --> K[Money at risk: final sale + return not confirmed]
+    H --> L[Pressure flags, each with one next step]
+    K --> M{Buyer decides}
+    L --> M
+    M -- wait / change size / buy anyway --> N{Signed in with Google?}
+    N -- no --> O[Result stays on screen only; offer to sign in to save]
+    N -- yes --> P[(Supabase byp_checks, RLS: only the owner's rows)]
+    P --> Q[/history: list, North Star 'pesos kept', delete]
 ```
 
 ### Swimlane: who does what
@@ -66,66 +60,74 @@ sequenceDiagram
     participant App as Before You Pay (browser)
     participant API as /api/extract (server)
     participant AI as Gemini vision
-    participant Rules as Rule engine (deterministic)
+    participant Engine as Step-5 engine (rules)
+    participant DB as Supabase (RLS)
     Buyer->>App: Upload checkout screenshot
-    App->>App: Resize image, validate type and size
-    App->>API: Send image (no personal profile attached)
-    API->>AI: Extract fields as strict JSON
-    AI-->>API: Items, sizes, prices, codes, visible terms
-    API-->>App: Sanitized fields (every field marked read / not visible)
-    Buyer->>App: Corrects fields, adds fit memory, pastes policy text
-    App->>Rules: Fields + fit memory + policy notes
-    Rules-->>App: Exposure, fit warnings, flags, reasons to wait
-    Buyer->>App: "I'll wait" or "Buy anyway, my call"
-    Note over App,Buyer: The app never places an order and never recommends a product
+    App->>API: Resized image (no profile, no account data)
+    API->>AI: "Extract only what is visible" + JSON schema
+    AI-->>API: Items, sizes, prices, codes, visible return text, pressure cues
+    API-->>App: Sanitized fields (the image is not stored)
+    Buyer->>App: Corrects any field
+    App->>Engine: Fields + matched return rule
+    Engine-->>App: Money at risk, flags with next steps
+    Buyer->>App: Decision (wait / change size / buy anyway)
+    Buyer->>App: Sign in with Google (only to save)
+    App->>DB: Insert check (names, sizes, prices, result, decision)
+    DB-->>App: Only this buyer's rows (auth.uid() = user_id)
+    Note over App,Buyer: The app never places an order, recommends a product or takes store money
 ```
 
 ## 6. Benchmark line
 
-- **The best existing solution on Earth for this is** True Fit (U.S.), which recommends a size by comparing a new item with the garments a shopper already owns and keeps, across brands.
-- **Mine differs or localizes by** running on the **buyer's** side from a screenshot of *any* store or social-feed checkout (True Fit is paid for and embedded by the retailer), and by pairing fit with the **money at risk under the store's return rule**, the part that cost me MX$6,565.
+- **The best existing solution on Earth for this is** True Fit (U.S.) and Zalando's size advice (Europe): they use a shopper's own garments or past returns to warn about fit before purchase.
+- **Mine differs or localizes by** working on the **buyer's side from a screenshot of any Mexican store** (True Fit and Zalando live inside the retailer and are paid by it), and by showing **the pesos at risk under that store's real return rule**, which is the part that cost me MX$6,565 and is never on the checkout screen.
 
 ## 7. The long view (3 years)
 
-If this slice works, Before You Pay becomes the buyer's personal fit and risk ledger for Mexico: a fit memory that follows the person across every brand, plus a public, dated, correctable registry of store return rules built from buyers' own evidence. It would plug into a share-sheet so the check happens inside Instagram or TikTok checkouts, where 51% of Mexican online shopping already happens. It stays funded without sales commissions, so the most common correct answer it gives can still be "wait."
+If this slice works, Before You Pay becomes the pre-payment check Mexicans run inside any store, Instagram or TikTok checkout, through the phone's share sheet. Its moat is a public, dated, correctable registry of real Mexican return rules built from stores' own words and buyers' evidence. It stays funded by buyers, never by stores, so "wait" remains a valid answer.
 
 ## 8. Scope cut (what I am NOT building)
 
-- No store, no product recommendations, no "similar items", no affiliate links (forbidden zone + shadow clause).
-- No placing orders or connecting to any store account.
-- No budget form or coverage questionnaire (Valeria's declaration), no evidence-card registry or appeals workflow (Inés's), no manipulation scoring (Regina's).
-- No body photos, no purchase-history import, no database, no accounts.
-- No size *prediction* model: fit output is a warning based on the buyer's own evidence, never "this will fit."
-- No real store policy is claimed as verified; unknown stays unknown.
+- No fit prediction and no fit memory across brands (the Week 10 fit memory is cut from the core).
+- No body photos or measurements.
+- No product, store or size recommendations, no affiliate links, no ads.
+- No placing orders, no store accounts, no browser extension, no share-sheet integration.
+- No saving the screenshot image.
+- No payments or subscription this week (the "who pays" bet is tested with users first).
+- No admin panel for the policy table. It's a reviewed file in the repo.
 
 ## 9. Architecture + stack
 
 | Layer | Choice | Why |
 |---|---|---|
-| Framework | Next.js 15 (App Router, TypeScript) | Same stack as my previous ships; one repo, one deploy |
-| Hosting | Vercel (free) | Auto-deploy on every push |
-| Vision + LLM | Google Gemini (`gemini-3.8-flash` (fallback `gemini-3.6-flash`)) via `@google/genai`, server-side route | Free tier, reads screenshots, strict JSON output |
-| **User-constraint data** | Fit memory (brand, size, outcome, one measured garment, wrist cm) in the browser's localStorage, with a "Delete all" button | Dragon Stack requirement without storing personal data on a server (Condition 5) |
-| Policy data | Small curated file `lib/policies.ts` + buyer-pasted policy text classified by keyword rules | Every finding shows source, check date, status (Condition 2) |
-| Logic | Deterministic rule engine `lib/rules.ts` | Exposure and warnings are explainable and testable, not LLM guesses |
-| Secrets | `GEMINI_API_KEY` in Vercel environment variables only | Security floor #1 |
-
-**Dragon Stack:** LLM + user-constraint data (fit memory) + vision (checkout screenshot).
+| Framework | Next.js 15 (App Router, TypeScript) + **Tailwind CSS v4** | Course stack floor; one repo, one deploy |
+| Hosting | Vercel (free), auto-deploy on push to `main` | Two or more deploys, real domain attached |
+| Domain | The venture's real domain, bought with the venture's Gmail and connected to Vercel | Venture rule: the domain is the URL of record |
+| Vision | Gemini Flash via `@google/genai`, server-side `/api/extract`, strict JSON schema | Reads screenshots; key only in Vercel env |
+| Engine (Step 5) | `lib/engine.ts`, deterministic and unit-tested | Condition 1: the AI reads, rules decide |
+| Return rules | `lib/policies.ts` curated table: store, regular/discounted returnable, window, fee, source URL, check date, status | Condition 2: unknown stays unknown |
+| Auth | Supabase Auth, **Sign in with Google** | Security floor #2 |
+| Data | Supabase Postgres `byp_checks`, **RLS on**, owner-only select/insert/delete, CHECK constraints on lengths | Floors #3, #4; Condition 4 |
+| Secrets | `GEMINI_API_KEY` in Vercel only; Supabase URL + anon key are public by design (RLS protects data) | Floor #1 |
 
 ## 10. Test plan
 
 | # | Test | Expected |
 |---|---|---|
-| T1 | Load the fictional demo | "SIMULATED" label visible; two jackets, MX$6,565 paid |
-| T2 | Demo + fit memory "brand L = too big" | High fit warning on both items, wording never says "will fit" |
-| T3 | Policy status "no" for discounted items | Conditional exposure = sum of discounted items; labeled "confirmed non-returnable" |
-| T4 | Policy unknown | Exposure labeled "returns not confirmed"; never shown as protected |
-| T5 | Edit a price in the table | Totals and exposure recalculate |
-| T6 | Accessory sized "M" with no cm | High warning asking for centimeters |
-| T7 | Upload a non-image or a file over 4 MB | Clear error, nothing sent |
-| T8 | Paste "Promotional items cannot be returned" | Policy becomes "no", source "Text you pasted", status advertised, today's date |
-| T9 | "I'll wait" / "Buy anyway" | Decision shown; no network request, no order |
-| T10 | Real screenshot with key configured | Fields extracted; missing fields shown as "not visible" |
-| Unit | `npm test` runs the rule engine checks | All pass |
+| T1 | Load the fictional sample | "SIMULATED" label; 2 items; money at risk shown |
+| T2 | Fictional store with "final sale on discount" | Discounted items counted as *confirmed final sale* |
+| T3 | Zara item with a discount | Regular rule "30 days, advertised"; discounted rule "not stated" → counted as *return not confirmed*, never protected |
+| T4 | Unknown store | Every peso counted as *return not confirmed*; rule card says "No policy found" |
+| T5 | Edit a price or quantity | Money at risk recalculates |
+| T6 | Same item twice / qty > 1 | Duplicate flag with one next step |
+| T7 | Pressure cue on the screenshot | Pressure flag quoting the cue, with one next step |
+| T8 | Every flag | Has exactly one non-empty next step |
+| T9 | Output text | Never contains "safe", "will fit", "guaranteed" |
+| T10 | Non-image or >4 MB file | Clear error, nothing sent |
+| T11 | Save without signing in | Prompt to sign in; nothing is written |
+| T12 | Save signed in → /history | Check appears with decision; North Star updates; delete removes it |
+| T13 | RLS | A second account can't see the first account's checks |
+| T14 | Real screenshot on the live domain | Fields extracted; missing fields shown as "not visible" |
+| Unit | `npm test` | All engine and policy tests pass |
 
-Persona test after deploy: a synthetic buyer walks the screens and narrates where she hesitates; worst confusion fixed and redeployed.
+Persona test after deploy: Rocío (primary). Worst confusion fixed and redeployed.
