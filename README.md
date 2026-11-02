@@ -13,12 +13,12 @@ Venture for Weeks 12–17 (Team 8). Read first: [`docs/CHARTER.md`](docs/CHARTER
 ## Run locally
 ```bash
 npm install
-cp .env.example .env.local   # Gemini key + Supabase URL/anon key (all optional; without Gemini the app offers a labeled SIMULATED sample)
+cp .env.example .env.local   # Gemini key (optional: without it the app offers a labeled SIMULATED sample)
 npm run dev
 npm test
 ```
 
 ## Environment (Vercel → Settings → Environment Variables)
-`GEMINI_API_KEY` (secret, server only) · `NEXT_PUBLIC_SUPABASE_URL` · `NEXT_PUBLIC_SUPABASE_ANON_KEY` (public by design; RLS protects the rows).
+`GEMINI_API_KEY` (secret, server only). The Supabase URL and **publishable** key live in `lib/supabase.ts`: they are public by design and RLS protects every row. The secret key is never in the repo.
 
 No store pays for this product. No affiliate links. It never recommends a product.

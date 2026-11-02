@@ -1,7 +1,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Public client configuration. The publishable key is designed to ship to every browser (it is in the page's
+// JavaScript either way); it grants nothing beyond what Row Level Security allows. The secret / service_role key
+// is never in this repo or in the app. Security floor #1 is about secrets; see docs/DECISIONS.md.
+const SUPABASE_URL = "https://cjzspprdnjqpoymlboxi.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_YmYawKV9Obe7SZmQY7Nctg_ljq76BK3";
 
-// The anon key is public by design; Row Level Security protects every row.
-export const supabase: SupabaseClient | null = url && anon ? createClient(url, anon) : null;
+export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);

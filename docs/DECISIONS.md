@@ -31,3 +31,9 @@
 
 ## Tomorrow's first move
 - After the two secrets are in: redeploy, sign in on the live domain, save a check, confirm it appears in /history, then confirm with a second Google account that RLS hides it (T12–T13). Record the demo.
+
+## Session 1, data layer (2026-11-01)
+- Supabase project: the existing free-tier project `semestre` (the free plan allows only two active projects). New table `byp_checks` created from `supabase/schema.sql`: RLS on, owner-only select/insert/delete, no update, CHECK constraints on every field.
+- **Sign in with Google:** created a Google Cloud project "Before You Pay" with an OAuth consent screen (External, in production, basic scopes only) and a web client whose only redirect URI is the Supabase callback. Google provider enabled in Supabase. Redirect allow-list: `https://beforeyoupay.xyz/**` and the Vercel URL. Site URL left untouched because other apps share this project.
+- **Supabase URL + publishable key in code (`lib/supabase.ts`) instead of Vercel env vars.** Both are public by design: they ship to every browser in the page's JavaScript either way, and RLS is what protects the rows. The secret / service_role key is never in the repo, the app or Vercel. The only secret, `GEMINI_API_KEY`, stays in Vercel env (security floor #1).
+- **Real domain:** `beforeyoupay.xyz`, bought on Vercel (US$1.99, auto-renew off) and connected to the project as Production.
