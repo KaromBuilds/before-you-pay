@@ -1,27 +1,24 @@
 # Before You Pay
 
-Check your size and what's really at risk **before** you pay for clothes online.
+**See what you'd lose if the size is wrong, before you pay.** Upload a screenshot of any online clothing checkout and see the pesos at risk under that store's real return rule, what's pushing you to pay fast, and one next step for each flag. Then choose: wait, change the size first, or buy anyway (your call). Sign in with Google to save checks to a private history.
 
-Upload a checkout screenshot. The app reads every item, size and price (Gemini vision), lets you correct anything, and then shows:
+Venture for Weeks 12–17 (Team 8). Read first: [`docs/CHARTER.md`](docs/CHARTER.md) · [`docs/PERSONAS.md`](docs/PERSONAS.md) · [`docs/PACKET.md`](docs/PACKET.md) · [`docs/DECISIONS.md`](docs/DECISIONS.md). The Week 10 ship is tagged `w10-ship`.
 
-- **Amount you'd pay** vs. **conditional exposure**: the money you could be stuck with if the size fails and the return isn't confirmed.
-- **Fit warnings** from your own fit memory (which size fit you, or didn't, in each brand) plus one measured garment. These are never a guarantee.
-- **The store's return rule**, always with its source, check date and status (advertised / supported / unverified). Unknown stays unknown.
-- **Reasons to wait**, then your call: "I'll wait" or "Buy anyway, my call". The app never places an order.
-
-No store, no product recommendations, no affiliate links. Fit memory is saved only in your browser and can be deleted with one click.
-
-Week 10 · Business Bending · Team 7 Blueprint (Regret prevention). See `docs/PACKET.md` and `docs/DECISIONS.md`.
+## How it works
+- `app/api/extract` — Gemini vision reads **only what's visible** on the screenshot into strict JSON. The image is not stored.
+- `lib/engine.ts` — the Step-5 engine: deterministic, tested rules compute money at risk (confirmed final sale + return not confirmed) and flags, each with exactly one next step.
+- `lib/policies.ts` — curated return rules with source URL, check date and status. Unknown stays unknown.
+- `supabase/schema.sql` — `byp_checks` with Row Level Security (owner-only select/insert/delete) and CHECK constraints.
 
 ## Run locally
-
 ```bash
 npm install
-cp .env.example .env.local   # add your Gemini key (optional: without it the app runs a labeled SIMULATED demo)
+cp .env.example .env.local   # Gemini key + Supabase URL/anon key (all optional; without Gemini the app offers a labeled SIMULATED sample)
 npm run dev
-npm test                     # rule-engine checks
+npm test
 ```
 
-## Deploy
+## Environment (Vercel → Settings → Environment Variables)
+`GEMINI_API_KEY` (secret, server only) · `NEXT_PUBLIC_SUPABASE_URL` · `NEXT_PUBLIC_SUPABASE_ANON_KEY` (public by design; RLS protects the rows).
 
-Vercel → import this repo → Environment Variables → `GEMINI_API_KEY` → Deploy. The key lives only in Vercel, never in the repo.
+No store pays for this product. No affiliate links. It never recommends a product.
