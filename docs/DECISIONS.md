@@ -7,3 +7,7 @@
 - **Reused on purpose:** the Week 10 screenshot reader (`/api/extract`) and the policy-text keyword reader, both tested in production in Week 10. The engine is rewritten around the Charter's nouns, and every flag carries a next step (Team 8 Condition 5).
 - **Data layer:** Supabase `byp_checks` with RLS. The screenshot image is never stored (Charter principle 4).
 - Charter, Personas and Packet were written and committed before any app code.
+
+## Session 1, deploy 1 (2026-11-01)
+- Pushed to `main`; Vercel auto-deployed (deploy 1, Ready). The Week 10 ship is preserved as branch `w10-ship` (the proxy refused the tag push).
+- **Bug found live (T14):** the fictional sample screenshot sent to `/api/extract` on the live URL hung for 60 s and returned `FUNCTION_INVOCATION_TIMEOUT` (504). One slow model call ate the entire function budget, so the fallback never ran. **Fix:** Flash-Lite goes first (reading a checkout doesn't need a reasoning model), and each model gets its own time budget (22 s, then 30 s) with an abort signal, so a slow model fails fast and the next one still runs inside the 60 s limit.

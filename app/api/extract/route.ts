@@ -5,7 +5,9 @@ import type { Category, Extraction, Item } from "@/lib/types";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const MODELS = (process.env.GEMINI_MODELS || "gemini-3.8-flash,gemini-3.6-flash").split(",").map((m) => m.trim()).filter(Boolean);
+// Flash-Lite first: fast enough for reading a checkout. Each model gets its own time budget so one slow model
+// can't exhaust the 60 s function limit (Week 12 bug: FUNCTION_INVOCATION_TIMEOUT on the live deploy).
+const MODELS = (process.env.GEMINI_MODELS || "gemini-3.5-flash-lite,gemini-3.8-flash").split(",").map((m) => m.trim()).filter(Boolean);
 const MAX_BYTES = 4 * 1024 * 1024;
 const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp"]);
 
@@ -99,14 +101,19 @@ export async function POST(req: Request) {
   try {
     const data = Buffer.from(await file.arrayBuffer()).toString("base64");
     const ai = new GoogleGenAI({ apiKey: key });
-    // gemini-2.5-flash now returns 404 for new keys; try current Flash models in order.
-    let lastErr: unknown = null;
-    for (const model of MODELS) {
+        let lastErr: unknown = null;
+    const budgets = [22_000, 30_000];
+    for (const [n, model] of MODELS.slice(0, 2).entries()) {
       try {
         const res = await ai.models.generateContent({
           model,
           contents: [{ role: "user", parts: [{ text: PROMPT }, { inlineData: { mimeType: file.type, data } }] }],
-          config: { responseMimeType: "application/json", responseSchema: schema, temperature: 0 },
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: schema,
+            temperature: 0,
+            abortSignal: AbortSignal.timeout(budgets[n] ?? 20_000),
+          },
         });
         const raw = JSON.parse(res.text ?? "{}");
         return NextResponse.json(sanitize(raw));
