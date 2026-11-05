@@ -38,3 +38,11 @@
 ## Tomorrow's first move
 - Record the demo on beforeyoupay.xyz, then start Week 13: five real users, beginning with Spanish-speaking buyers like Rocío (the English UI is the first risk to test).
 
+
+## Week 13 · Session 1 (2026-11-05) — Technologist test, mechanical fix, event log
+- **Real-checkout test (Brain Bending, Technologist):** two real El Palacio de Hierro checkouts on the live domain. The reader got store, item, price, quantity and the "Quedan pocos" pressure cue right. Size was "not visible" on both. The store came back as "elpalaciodehierro.com" once and "El Palacio de Hierro" once. With no rule for Palacio, both checks showed 100% of the cart as "return not confirmed."
+- **Bug fixed:** Palacio added to the rule table from its own "Cambios y devoluciones" page (30 days after delivery; no returns on perfume/cosmetics, lingerie, underwear, evening dresses, swimwear; discounted items not stated → stay unknown). Aliases cover the domain and the name. Regression tests: the same full-price sweater goes from MX$1,599 at risk (no rule) to MX$0 (Palacio rule). 14/14 pass.
+- **Seller, not brand:** a Brownie item bought on Palacio's site follows Palacio's rule. "Brownie" alone does not match a rule on purpose.
+- **Stack floor — anonymous event log (`byp_events`, `lib/track.ts`):** records what people DO in a session (upload, read ok/failed, field edited, details opened, policy pasted, source link opened, each decision, saved) plus whether the store's rule was known, language and phone/desktop. Never the image, item names, prices, store name, account or IP. RLS: insert-only for the public key; nobody can read it through the app. Logging fails silently and never blocks a check.
+- **Kept for after the real-user sessions (so the #1 fix has a real before/after):** the ES/EN switch and splitting the headline into "confirmed you'd lose" vs "no confirmed rule."
+- Tomorrow's first move: run `supabase/schema.sql` (event table) in the Supabase SQL editor, confirm events arrive, then start the five sessions.

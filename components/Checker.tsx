@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Category, Decision, Extraction, Flag, Item, Returnable } from "@/lib/types";
 import { analyze, mxn } from "@/lib/engine";
-import { resolveRule } from "@/lib/policies";
+import { findRule, resolveRule } from "@/lib/policies";
+import { track } from "@/lib/track";
 import { DEMO_EXTRACTION } from "@/lib/demo";
 import { supabase } from "@/lib/supabase";
 import { toRow } from "@/lib/validate";
@@ -105,7 +106,8 @@ export default function Checker() {
         return;
       }
     } catch {}
-    if (params.get("sample") === "1") start({ ...DEMO_EXTRACTION, checkedAt: today() });
+    track("page_view", { onlyOnce: true });
+    if (params.get("sample") === "1") { track("sample_used"); start({ ...DEMO_EXTRACTION, checkedAt: today() }); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -115,6 +117,7 @@ export default function Checker() {
     if (!f.type.startsWith("image/")) return setError("That isn't an image. Upload a PNG or JPG screenshot of your checkout.");
     if (f.size > 15 * 1024 * 1024) return setError("That image is too large (over 15 MB).");
     setBusy(true);
+    track("upload_started");
     try {
       const blob = await shrink(f);
       if (blob.size > 4 * 1024 * 1024) throw new Error("The image is still over 4 MB after resizing. Try a smaller screenshot.");
@@ -133,10 +136,10 @@ export default function Checker() {
         setError("The screenshot reader isn't configured on this deployment, so we loaded the SIMULATED fictional sample instead.");
         setPreview(null);
         start({ ...DEMO_EXTRACTION, checkedAt: today() });
-      } else if (!r.ok) setError(j.error || "Something went wrong.");
+      } else if (!r.ok) { track("read_failed"); setError(j.error || "Something went wrong."); }
       else if (!j.items?.length) {
         setError("We couldn't find any products on that screenshot. Use a screenshot of the cart or payment screen, with the items visible.");
-      } else start(j as Extraction);
+      } else { track("read_ok", { ruleKnown: !!findRule(j.store ?? null) }); start(j as Extraction); }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -145,6 +148,7 @@ export default function Checker() {
   }
 
   const touch = (k: string) => {
+    if (!edited.has(k)) track("field_edited");
     setEdited((s) => new Set(s).add(k));
     setDecision(null);
     setSaveState("idle");
@@ -181,7 +185,7 @@ export default function Checker() {
       setSaveState("error");
       setSaveMsg("We couldn't save this check. Try again in a moment.");
       console.error(error.message);
-    } else setSaveState("saved");
+    } else { setSaveState("saved"); track("saved"); }
   }
 
   const st = (k: string, v: unknown) =>
@@ -220,7 +224,7 @@ export default function Checker() {
           />
         </label>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
-          <button onClick={() => { setPreview(null); start({ ...DEMO_EXTRACTION, checkedAt: today() }); }} className="font-semibold text-navy underline">
+          <button onClick={() => { setPreview(null); track("sample_used"); start({ ...DEMO_EXTRACTION, checkedAt: today() }); }} className="font-semibold text-navy underline">
             No screenshot? Try the fictional sample
           </button>
           <a href="/sample-checkout.png" download className="text-xs text-mute underline">Download a fictional checkout to upload</a>
@@ -279,7 +283,7 @@ export default function Checker() {
               {DECISIONS.map(([d, label]) => (
                 <button
                   key={d}
-                  onClick={() => { setDecision(d); setSaveState("idle"); }}
+                  onClick={() => { setDecision(d); setSaveState("idle"); track(`decision_${d}`, { ruleKnown: rule?.status === "advertised" }); }}
                   className={`rounded-xl border px-3 py-3 text-sm font-semibold ${decision === d ? "border-navy bg-navy text-white" : "border-navy text-navy hover:bg-paper"}`}
                 >
                   {label}
@@ -327,7 +331,7 @@ export default function Checker() {
             <p className="mt-2 text-sm text-mute">{rule.note}</p>
             <p className="mt-2 text-xs text-mute">
               Source:{" "}
-              {rule.sourceUrl ? <a href={rule.sourceUrl} target="_blank" rel="noreferrer" className="underline">{rule.source}</a> : rule.source} · checked {rule.checkedAt}
+              {rule.sourceUrl ? <a href={rule.sourceUrl} target="_blank" rel="noreferrer" onClick={() => track("policy_link_opened")} className="underline">{rule.source}</a> : rule.source} · checked {rule.checkedAt}
             </p>
             <details className="mt-3 text-sm">
               <summary className="cursor-pointer font-semibold text-navy">Have the store’s policy text? Paste it</summary>
@@ -340,7 +344,7 @@ export default function Checker() {
                 className={`${input} mt-2`}
               />
               <button
-                onClick={() => { setPastedApplied(pasted.trim().length >= 15 ? pasted.trim() : null); setDecision(null); setSaveState("idle"); }}
+                onClick={() => { if (pasted.trim().length >= 15) track("policy_pasted"); setPastedApplied(pasted.trim().length >= 15 ? pasted.trim() : null); setDecision(null); setSaveState("idle"); }}
                 className="mt-2 rounded-lg border border-navy px-3 py-1.5 text-sm font-semibold text-navy"
               >
                 Read this policy
@@ -352,7 +356,7 @@ export default function Checker() {
 
           <Card>
             <details open={ex.items.some((i) => !i.size || i.paidPrice == null)}>
-            <summary className="cursor-pointer font-bold text-navy">
+            <summary onClick={() => track("details_opened", { onlyOnce: true })} className="cursor-pointer font-bold text-navy">
               What we read: {ex.items.length} item{ex.items.length === 1 ? "" : "s"}{" "}
               <span className="text-sm font-normal text-mute">· tap to check or fix</span>
             </summary>

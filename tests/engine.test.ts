@@ -110,3 +110,21 @@ test("bug fix: similar but different items are named as a pair, not 'twice'", ()
   const g = analyze(pants, zara).flags.find((x) => x.id === "duplicates")!;
   assert.ok(g.detail.includes('"Wide-leg pants" appears twice'));
 });
+
+test("W13 bug fix: Palacio is found whether the reader returns the domain or the name", () => {
+  assert.equal(findRule("elpalaciodehierro.com")?.store, "El Palacio de Hierro");
+  assert.equal(findRule("El Palacio de Hierro")?.store, "El Palacio de Hierro");
+  assert.equal(findRule("Brownie")?.store, undefined); // the brand alone is not the seller
+});
+
+test("W13 Palacio full-price sweater (real checkout, Nov 5): 100% at risk before the rule, 0 after", () => {
+  const sweater: Extraction = {
+    store: "El Palacio de Hierro",
+    items: [{ id: "s", name: "Suéter cuello redondo Mujer", brand: "", size: "", category: "apparel", listPrice: 1599, paidPrice: 1599, qty: 1 }],
+    discountCodes: [], shipping: null, total: null, returnTermsVisible: null, pressureCues: [], source: "screenshot", checkedAt: "2026-11-05",
+  };
+  assert.equal(analyze(sweater, unknownRule("El Palacio de Hierro", "2026-11-05")).moneyAtRisk, 1599);
+  const r = analyze(sweater, findRule("elpalaciodehierro.com")!);
+  assert.equal(r.moneyAtRisk, 0);
+  assert.equal(r.notConfirmed, 0);
+});

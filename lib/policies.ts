@@ -17,6 +17,21 @@ export const RETURN_RULES: ReturnRule[] = [
     note: "30 days from the shipping date, items in original condition with all tags. The page does not say whether discounted items can be returned; it points to separate 'special return conditions'.",
   },
   {
+    store: "El Palacio de Hierro",
+    // Week 13 bug: the reader returned "elpalaciodehierro.com" on one checkout and "El Palacio de Hierro" on another.
+    // Aliases cover both. Brands sold on Palacio's site (e.g. Brownie) follow Palacio's rule: the seller decides, not the brand.
+    aliases: ["elpalaciodehierro", "palacio de hierro", "el palacio"],
+    regularReturnable: "yes",
+    discountedReturnable: "unknown",
+    windowDays: 30,
+    costNote: "Return by courier or at drop-off points in some Palacio stores. The page does not state a return fee.",
+    status: "advertised",
+    source: "elpalaciodehierro.com · Cambios y devoluciones",
+    sourceUrl: "https://www.elpalaciodehierro.com/cambios-devoluciones.html",
+    checkedAt: "2026-11-05",
+    note: "Up to 30 days after delivery, by calling 55-5725-2246 for a folio. No returns on perfume and cosmetics, lingerie, underwear, evening dresses or swimwear. The page does not say whether discounted items can be returned. (The same page also mentions 'three days' to inspect the item; we use the 30-day return step.)",
+  },
+  {
     store: "The North Face México",
     aliases: ["the north face", "north face", "tnf"],
     regularReturnable: "unknown",
