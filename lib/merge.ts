@@ -4,7 +4,11 @@ import type { Extraction, Item } from "./types";
 // Several screenshots of ONE cart are read one by one and merged into a single check.
 // Overlap rule: when the same line (name + size + price) appears in two different screenshots, it is the same
 // line seen twice while scrolling, so it is kept once. Repeats inside one screenshot are real and kept.
-const key = (i: Item) => `${i.name.trim().toLowerCase()}|${i.size.trim().toLowerCase()}|${i.paidPrice ?? ""}`;
+// Bug found in the live test (Nov 8): the reader returned "M" on one screenshot and "Talla M" on the next,
+// so the overlapping dress was counted twice. Sizes and names are normalized before comparing.
+const norm = (s: string) =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\b(talla|size|tamano)\b/g, "").replace(/[^a-z0-9]/g, "");
+const key = (i: Item) => `${norm(i.name)}|${norm(i.size)}|${i.paidPrice ?? ""}`;
 
 export function mergeExtractions(parts: Extraction[]): Extraction {
   if (parts.length === 0) throw new Error("nothing to merge");

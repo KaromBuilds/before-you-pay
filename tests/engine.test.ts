@@ -167,3 +167,11 @@ test("W13 two identical items inside ONE screenshot are both kept (real duplicat
   const m = mergeExtractions([shot([["Tee", "M", 299], ["Tee", "M", 299]], null), shot([["Cap", "U", 199]], 797)]);
   assert.equal(m.items.length, 3);
 });
+
+test("W13 bug fix (live test): 'M' and 'Talla M' are the same overlapping line", () => {
+  const a = shot([["Vestido corto", "M", 1599]], null, null);
+  const b = shot([["VESTIDO CORTO", "Talla M", 1599], ["Falda midi", "Talla S", 4495]], 6094);
+  const m = mergeExtractions([a, b]);
+  assert.equal(m.items.length, 2);
+  assert.equal(analyze(m, zara).unread, 0);
+});
