@@ -128,3 +128,42 @@ test("W13 Palacio full-price sweater (real checkout, Nov 5): 100% at risk before
   assert.equal(r.moneyAtRisk, 0);
   assert.equal(r.notConfirmed, 0);
 });
+
+// ── Week 13 fix #1: long carts (two real users) ─────────────────────────────
+import { mergeExtractions } from "../lib/merge.ts";
+const shot = (items: Array<[string, string, number]>, total: number | null, store: string | null = "Zara"): Extraction => ({
+  store,
+  items: items.map(([name, size, price], i) => ({ id: `i${i}`, name, brand: "", size, category: "apparel", listPrice: price, paidPrice: price, qty: 1 })),
+  discountCodes: [], shipping: null, total, returnTermsVisible: null, pressureCues: [], source: "screenshot", checkedAt: "2026-11-08",
+});
+
+test("W13 session 2 (Zara app): items read don't add up to the total on screen -> flagged first, never hidden", () => {
+  const ex = shot([["Blazer", "M", 1799], ["Top", "M", 1599], ["Dress", "M", 1599]], 9492, null);
+  const r = analyze(ex, unknownRule(null, "2026-11-08"));
+  assert.equal(r.unread, 4495);
+  assert.equal(r.flags[0].id, "items-missing");
+  assert.match(r.flags[0].nextStep, /screenshot of the rest/);
+  assert.ok(r.flags.some((f) => f.id === "no-store"));
+});
+
+test("W13 no false alarm when items + shipping match the total", () => {
+  const ex = { ...shot([["Pants", "32", 849]], 948), shipping: 99 };
+  assert.equal(analyze(ex, zara).unread, 0);
+});
+
+test("W13 two screenshots of one cart merge into one check; the overlapping line counts once", () => {
+  const a = shot([["Blazer", "M", 1799], ["Top", "M", 1599]], null, null);
+  const b = shot([["Top", "M", 1599], ["Dress", "M", 1599], ["Skirt", "S", 4495]], 9492, "ZARA");
+  const m = mergeExtractions([a, b]);
+  assert.equal(m.items.length, 4);
+  assert.equal(m.store, "ZARA");
+  assert.equal(m.total, 9492);
+  const r = analyze(m, findRule(m.store)!);
+  assert.equal(r.unread, 0);
+  assert.equal(r.amountPaid, 9492);
+});
+
+test("W13 two identical items inside ONE screenshot are both kept (real duplicates)", () => {
+  const m = mergeExtractions([shot([["Tee", "M", 299], ["Tee", "M", 299]], null), shot([["Cap", "U", 199]], 797)]);
+  assert.equal(m.items.length, 3);
+});

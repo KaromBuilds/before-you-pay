@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import type { Category, Decision, Extraction, Flag, Item, Returnable } from "@/lib/types";
 import { analyze, mxn } from "@/lib/engine";
 import { findRule, resolveRule } from "@/lib/policies";
+import { mergeExtractions } from "@/lib/merge";
 import { track } from "@/lib/track";
 import { DEMO_EXTRACTION } from "@/lib/demo";
 import { supabase } from "@/lib/supabase";
@@ -111,37 +112,64 @@ export default function Checker() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function onFile(f: File | undefined) {
+  // Week 13 fix #1: one cart can take several screenshots (up to 4). Each is read, then merged into one check.
+  // Reading a screenshot returns an Extraction, or an error message for the buyer.
+  async function readOne(f: File): Promise<Extraction | { error: string; noKey?: boolean }> {
+    if (!f.type.startsWith("image/")) return { error: "That isn't an image. Upload a PNG or JPG screenshot of your checkout." };
+    if (f.size > 15 * 1024 * 1024) return { error: "That image is too large (over 15 MB)." };
+    const blob = await shrink(f);
+    if (blob.size > 4 * 1024 * 1024) return { error: "The image is still over 4 MB after resizing. Try a smaller screenshot." };
+    const fd = new FormData();
+    fd.append("image", blob, "checkout.jpg");
+    const r = await fetch("/api/extract", { method: "POST", body: fd });
+    const text = await r.text();
+    let j: { error?: string } & Partial<Extraction> = {};
+    try {
+      j = JSON.parse(text);
+    } catch {
+      return { error: "The reader is busy or timed out. Try again in a moment, or try the fictional sample." };
+    }
+    if (r.status === 503 && j.error === "no_key") return { error: "no_key", noKey: true };
+    if (!r.ok) return { error: j.error || "Something went wrong." };
+    if (!j.items?.length) return { error: "We couldn't find any products on that screenshot. Use a screenshot of the cart or payment screen, with the items visible." };
+    if (!previewSet) {
+      setPreview(URL.createObjectURL(blob));
+      previewSet = true;
+    }
+    return j as Extraction;
+  }
+  let previewSet = false;
+
+  async function onFiles(list: FileList | null, append: boolean) {
     setError(null);
-    if (!f) return;
-    if (!f.type.startsWith("image/")) return setError("That isn't an image. Upload a PNG or JPG screenshot of your checkout.");
-    if (f.size > 15 * 1024 * 1024) return setError("That image is too large (over 15 MB).");
+    const files = list ? Array.from(list).slice(0, 4) : [];
+    if (!files.length) return;
     setBusy(true);
     track("upload_started");
+    previewSet = append;
     try {
-      const blob = await shrink(f);
-      if (blob.size > 4 * 1024 * 1024) throw new Error("The image is still over 4 MB after resizing. Try a smaller screenshot.");
-      setPreview(URL.createObjectURL(blob));
-      const fd = new FormData();
-      fd.append("image", blob, "checkout.jpg");
-      const r = await fetch("/api/extract", { method: "POST", body: fd });
-      const text = await r.text();
-      let j: { error?: string } & Partial<Extraction> = {};
-      try {
-        j = JSON.parse(text);
-      } catch {
-        j = { error: "The reader is busy or timed out. Try again in a moment, or try the fictional sample." };
-      }
-      if (r.status === 503 && j.error === "no_key") {
+      const results = await Promise.all(files.map((f) => readOne(f).catch((e) => ({ error: e instanceof Error ? e.message : "Something went wrong." }))));
+      if (results.some((r) => "noKey" in r && r.noKey)) {
         setError("The screenshot reader isn't configured on this deployment, so we loaded the SIMULATED fictional sample instead.");
         setPreview(null);
         start({ ...DEMO_EXTRACTION, checkedAt: today() });
-      } else if (!r.ok) { track("read_failed"); setError(j.error || "Something went wrong."); }
-      else if (!j.items?.length) {
-        setError("We couldn't find any products on that screenshot. Use a screenshot of the cart or payment screen, with the items visible.");
-      } else { track("read_ok", { ruleKnown: !!findRule(j.store ?? null) }); start(j as Extraction); }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong.");
+        return;
+      }
+      const ok = results.filter((r): r is Extraction => !("error" in r));
+      const bad = results.filter((r): r is { error: string } => "error" in r);
+      if (!ok.length) {
+        track("read_failed");
+        setError(bad[0]?.error || "Something went wrong.");
+        return;
+      }
+      if (bad.length) setError(`We read ${ok.length} of ${files.length} screenshots. ${bad[0].error}`);
+      const merged = mergeExtractions(append && ex && ex.source === "screenshot" ? [ex, ...ok] : ok);
+      track("read_ok", { ruleKnown: !!findRule(merged.store) });
+      if (append && ex) {
+        setEx(merged);
+        setDecision(null);
+        setSaveState("idle");
+      } else start(merged);
     } finally {
       setBusy(false);
     }
@@ -209,16 +237,18 @@ export default function Checker() {
 
       <Card>
         <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line px-4 py-8 text-center hover:border-navy">
-          <span className="text-base font-semibold text-navy">{busy ? "Reading your checkout…" : "Upload checkout screenshot"}</span>
+          <span className="text-base font-semibold text-navy">{busy ? "Reading your checkout…" : "Upload checkout screenshots"}</span>
           <span className="text-xs text-mute">The screen with your cart and the total · any store</span>
+          <span className="text-xs font-semibold text-navy-2">Long cart? Select up to 4 screenshots of the same cart.</span>
           <span className="text-xs text-mute">iPhone: side button + volume up · Android: power + volume down</span>
           <input
             type="file"
             accept="image/png,image/jpeg,image/webp"
+            multiple
             className="sr-only"
             disabled={busy}
             onChange={(e) => {
-              onFile(e.target.files?.[0]);
+              onFiles(e.target.files, false);
               e.target.value = "";
             }}
           />
@@ -252,6 +282,9 @@ export default function Checker() {
             <dl className="mt-3 divide-y divide-line text-sm">
               <div className="flex justify-between py-1.5"><dt>Confirmed final sale</dt><dd className="font-bold">{mxn(result.finalSale)}</dd></div>
               <div className="flex justify-between py-1.5"><dt>Return not confirmed</dt><dd className="font-bold">{mxn(result.notConfirmed)}</dd></div>
+              {result.unread > 0 && (
+                <div className="flex justify-between py-1.5 text-warn"><dt>Not read from your screenshot yet</dt><dd className="font-bold">{mxn(result.unread)}</dd></div>
+              )}
               <div className="flex justify-between py-1.5 text-mute">
                 <dt>You’d pay {result.amountPaidSource !== "unknown" && <span className="text-xs">({result.amountPaidSource})</span>}</dt>
                 <dd>{result.amountPaid != null ? mxn(result.amountPaid) : "not visible"}</dd>
@@ -260,6 +293,22 @@ export default function Checker() {
             <p className="mt-3 rounded-lg bg-paper px-3 py-2 text-sm">
               <b className="text-navy">Next step:</b> {result.nextStep}
             </p>
+            {ex.source === "screenshot" && (
+              <label className={`mt-3 block cursor-pointer rounded-lg border border-dashed px-3 py-2 text-center text-sm font-semibold ${result.unread > 0 ? "border-warn text-warn" : "border-line text-navy"} hover:bg-paper`}>
+                {busy ? "Reading…" : "+ Add another screenshot of this cart"}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  multiple
+                  className="sr-only"
+                  disabled={busy}
+                  onChange={(e) => {
+                    onFiles(e.target.files, true);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            )}
           </Card>
 
           {result.flags.length > 0 && (

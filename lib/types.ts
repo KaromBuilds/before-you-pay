@@ -70,6 +70,8 @@ export interface Result {
   moneyAtRisk: number;
   finalSale: number;
   notConfirmed: number;
+  /** Week 13: total on the screen minus what we could read (items + shipping). Shown, never hidden. */
+  unread: number;
   perItem: ItemRisk[];
   flags: Flag[];
   nextStep: string;

@@ -56,6 +56,35 @@ export function analyze(ex: Extraction, rule: ReturnRule): Result {
   const notConfirmed = perItem.filter((p) => p.returnable === "unknown").reduce((a, p) => a + p.amount, 0);
   const store = ruleLabel(rule);
 
+  // 0. Week 13 user sessions: long carts don't fit in one screenshot. If the total on the screen is bigger than
+  // what we read, say so (Team 8 Condition 4: when the product read less than the user showed it, it says so).
+  let unread = 0;
+  if (ex.total != null && lines.length && lines.every((x) => x != null)) {
+    const readSum = (lines as number[]).reduce((a, b) => a + b, 0) + (ex.shipping ?? 0);
+    const gap = Math.round((ex.total - readSum) * 100) / 100;
+    if (gap > Math.max(50, ex.total * 0.05)) {
+      unread = gap;
+      flags.push({
+        id: "items-missing",
+        level: "high",
+        title: `We read ${mxn(readSum)}, but your screen shows a total of ${mxn(ex.total)}`,
+        detail: `About ${mxn(gap)} may be items we couldn't see (a long cart, or the rest of the page). That money isn't counted above, so your real risk may be higher.`,
+        nextStep: "Add a screenshot of the rest of your cart.",
+      });
+    }
+  }
+
+  // 0b. Week 13 user sessions: some store apps (Zara's) never print the store's name on the cart.
+  if (!ex.store && rule.status === "unverified") {
+    flags.push({
+      id: "no-store",
+      level: "high",
+      title: "We couldn't see the store's name",
+      detail: "Some store apps don't show it on the cart, so we can't look up that store's return rule.",
+      nextStep: "Open “What we read” below and type the store's name, for example Zara.",
+    });
+  }
+
   // 1. Final sale
   if (finalSale > 0) {
     const n = perItem.filter((p) => p.returnable === "no").length;
@@ -162,6 +191,7 @@ export function analyze(ex: Extraction, rule: ReturnRule): Result {
     moneyAtRisk: finalSale + notConfirmed,
     finalSale,
     notConfirmed,
+    unread,
     perItem,
     flags,
     nextStep,
