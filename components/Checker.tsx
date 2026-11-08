@@ -277,6 +277,9 @@ export default function Checker() {
               <div className="min-w-0 flex-1">
                 <p className={`text-4xl font-extrabold tracking-tight ${result.moneyAtRisk > 0 ? "text-risk" : "text-ok"}`}>{mxn(result.moneyAtRisk)}</p>
                 <p className="text-sm text-mute">at risk if the size fails</p>
+                {result.unread > 0 && (
+                  <p className="mt-1 text-sm font-semibold text-warn">So far: part of your cart wasn’t read, so the real number may be higher.</p>
+                )}
               </div>
             </div>
             <dl className="mt-3 divide-y divide-line text-sm">
