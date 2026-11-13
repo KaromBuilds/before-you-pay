@@ -5,8 +5,8 @@ import type { Category, Extraction, Item } from "@/lib/types";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-// Flash-Lite first: fast enough for reading a checkout. Each model gets its own time budget so one slow model
-// can't exhaust the 60 s function limit (Week 12 bug: FUNCTION_INVOCATION_TIMEOUT on the live deploy).
+// Flash-Lite first: fast enough for reading a checkout (≈2–3 s). One shared deadline so a slow model can't exhaust
+// the platform's function limit (Week 12 bug: FUNCTION_INVOCATION_TIMEOUT on the live deploy).
 const MODELS = (process.env.GEMINI_MODELS || "gemini-3.5-flash-lite,gemini-3.8-flash").split(",").map((m) => m.trim()).filter(Boolean);
 const MAX_BYTES = 4 * 1024 * 1024;
 const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp"]);
@@ -102,9 +102,14 @@ export async function POST(req: Request) {
     const data = Buffer.from(await file.arrayBuffer()).toString("base64");
     const ai = new GoogleGenAI({ apiKey: key });
         let lastErr: unknown = null;
-    const budgets = [22_000, 30_000];
+    // Week 14 · hosting moved to Netlify, whose functions may stop at 10 s. Both models share one total deadline:
+    // the first gets up to 7 s; a second model only runs if there is still time left (EXTRACT_TOTAL_MS to change it).
+    const TOTAL = Number(process.env.EXTRACT_TOTAL_MS) || 9_000;
     const t0 = Date.now();
     for (const [n, model] of MODELS.slice(0, 2).entries()) {
+      const left = TOTAL - (Date.now() - t0) - 300;
+      const budget = n === 0 ? Math.min(7_000, left) : left;
+      if (budget < 1_500) break;
       try {
         const res = await ai.models.generateContent({
           model,
@@ -113,7 +118,7 @@ export async function POST(req: Request) {
             responseMimeType: "application/json",
             responseSchema: schema,
             temperature: 0,
-            abortSignal: AbortSignal.timeout(budgets[n] ?? 20_000),
+            abortSignal: AbortSignal.timeout(budget),
           },
         });
         const raw = JSON.parse(res.text ?? "{}");

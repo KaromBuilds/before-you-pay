@@ -1,0 +1,10 @@
+# Week 14 · Hosting moved from Vercel to Netlify (Vercel paused the whole Hobby team until Dec 11, 2026 for
+# "Fast Origin Transfer" caused by another project). Next.js is detected automatically; secrets live in the
+# Netlify dashboard (GEMINI_API_KEY), never in this file.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_TELEMETRY_DISABLED = "1"
