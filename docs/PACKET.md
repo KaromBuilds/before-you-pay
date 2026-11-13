@@ -1,53 +1,65 @@
-# PACKET — Before You Pay (Week 13 · Real Humans)
+# PACKET — Before You Pay (Week 14 · Pricing: the number that tells the truth)
 
-**Founder:** Karom Asael González Martínez · Team 8 · Technologist this week
-**Venture:** Before You Pay, live at **beforeyoupay.xyz**. See [`CHARTER.md`](CHARTER.md) and [`PERSONAS.md`](PERSONAS.md). Week 12 packet archived in [`w12/`](w12/PACKET.md).
-**Team 8 Week 13 Blueprint conditions this build must honor:** (1) declared ≠ evidence · (2) complaints kept verbatim, never quietly downgraded · (3) **shadow clause:** testing never turns the user into data · (4) no false certainty · (5) the fix must move toward the moment of commitment.
+**Founder:** Karom Asael González Martínez · Team 5 · Money this week
+**Venture:** Before You Pay, live at **beforeyoupay.xyz**. See [`CHARTER.md`](CHARTER.md) and [`PERSONAS.md`](PERSONAS.md). Earlier packets: [`w12/`](w12/PACKET.md), [`w13/`](w13/PACKET.md).
+**Team 5 Week 14 Blueprint conditions this build must honor:**
+1. Reconstruct the current task and alternatives **before** showing a price: buyer, budget owner, unit, full cost, next action.
+2. Record **rejection, stated interest, requests and paid commitments separately**. No hypothetical yes becomes demand or revenue.
+3. Compare like for like. **10:1 is a hypothesis** until real baselines are measured; show proxies and uncertainty.
+4. **Shadow clause:** paying can't buy a misleading answer, a hidden ranking, access to unshared evidence or a false safety verdict. Simulations are labeled.
+5. Consent, privacy, portability: document who sees what and how it is corrected or deleted.
+6. A price must cover measured delivery and support; **don't sell what the current operation can't deliver.**
+
+**My declaration:** offer five buyers the MX$60 four-check pack and record each no; free and paid answers stay identical (Conditions 2, 3, 4).
 
 ---
 
 ## 1. Problem, in my words
 
-Week 12 built the check: a buyer uploads the checkout screenshot she already has and sees the pesos she'd lose if the size fails, under that store's real return rule. This week real people used it on their own phones, and the first thing they ran into wasn't the one I expected. **Carts don't fit in one screenshot.** One user said *"no me dejó subir múltiples fotos entonces no enfoqué todo el carrito."* Another uploaded a Zara-app cart. The app read three items and said **MX$4,997 at risk**, while her own screen showed a **MX$9,492** total. The items it couldn't see simply didn't count, so the product showed *less* risk than she actually had. For a tool whose whole promise is "no false certainty," that's the worst possible failure.
+Before You Pay works, and it has no price. My own /about page said *"frequent buyers pay a small fee… it's a bet, not a fact yet"*: no number, no named payer, exactly this week's forbidden zone. My Brain Bending brief gave it a number built from arithmetic, not courage: the 10:1 holds for a MX$15 check from MX$625 at risk. Now the number has to live on the site in three places that agree with each other (the pricing page, a simulator and the 10:1 memo), and the site needs a way to learn whether anyone **pays**, not just says yes. So far: a friend said she'd pay up to MX$25 a check; nobody has paid.
 
-## 2. Exact user
+## 2. Exact user (and who pays)
 
-The Charter user, now with evidence: an adult in Mexico on a phone, about to pay for clothes, with **a cart longer than one screen** and often a store app that doesn't print the store's name on the cart (the Zara app). Week 13 sessions: a user buying on Amazon, and a 24-year-old buying on the Zara app.
+- **Segment 1 — sale-season buyer (pays per check).** An adult in Mexico on a phone, buying discounted clothes in a sale (Buen Fin, Hot Sale, January), with a guessed size. Evidence: the Week 13 Zara-app user (24) with MX$4,997 at risk. **She is buyer and budget owner**: it's her money. Unit: one check (one cart, up to 4 screenshots).
+- **Segment 2 — heavy buyer or someone buying for several people (30-day pass).** About two risky carts a month or more. Evidence: me (~30 online clothing purchases a year); Rocío (51, buys for the family) in [`PERSONAS.md`](PERSONAS.md).
+- **Second payer (a bet, not sold):** a card issuer offering the pass as a cardholder benefit, paid per enrolled cardholder, never per purchase.
+- **Never a payer:** stores, brands, marketplaces (Charter principle 3).
 
 ## 3. Success definition
 
-> Before the module closes, at beforeyoupay.xyz, a buyer with a long cart can upload **up to four screenshots of the same cart at once** (or add more after the first result). The app merges them into one check, counts a line seen in two screenshots only once, and **never shows a risk smaller than what's on her screen without saying so**: if the items read don't add up to the total, it shows the unread amount and tells her to add the rest of the cart. If no store name is visible, it asks her to type it, so the store's return rule can apply.
+> Before the module closes, at beforeyoupay.xyz: **/pricing** first shows what a buyer does today and what it costs, then three plans (Free · 4-check pack MX$60 · 30-day pass MX$49) with the free/paid line drawn and the second payer marked as a bet; **/simulator** turns users × conversion × price into monthly and annual projections, shows every assumption tagged measured / sourced / assumed, and lets a signed-in user save, reload and delete named scenarios; **/about** carries the one-page **10:1 memo**, computed from the same assumptions file; the **free limit** (1 full check a month per device) works and a paid code unlocks exactly what was sold; the **pricing evidence ledger** shows every conversation in its own column (no · said yes · asked for the pack · paid); and a test proves **a free check and a paid check give the identical answer**.
 
 ## 4. Mockup (image-generated)
 
-![Week 13 mockup](mockup-w13.png)
+![Week 14 mockup](mockup-w14.png)
 
 Image-generation prompt used:
 
-> *A realistic mobile web app mockup, phone portrait, white background with deep navy and amber accents. Top bar: "Before You Pay". Below, a row of three small thumbnails of clothing cart screenshots with a "+ Add another screenshot of this cart" dashed button. A big summary card with a red number "MX$4,997" and the line "at risk if the size fails", then smaller rows: "Return not confirmed MX$4,997", an amber row "Not read from your screenshot yet MX$4,495", and "You'd pay MX$9,492". An amber warning card: "We read MX$4,997, but your screen shows a total of MX$9,492" with a bold line "Next step: Add a screenshot of the rest of your cart." Bottom: three buttons "I'll wait" (filled navy), "I'll change the size first", "Buy anyway, my call". Flat, clean UI, no ads, no store logos.*
+> *Clean flat UI mockup of a mobile phone screen (iPhone, portrait) for a web app called "Before You Pay", page title "Pricing". Navy blue (#13294b) and white design, rounded cards, plenty of white space, sans-serif type, English text. Top: a small section "What you do today" with three short rows: "Guess the size", "Read the store's policy", "Buy two sizes, return one". Then three stacked plan cards: "Free — 1 full check a month — MX$0"; "4-check pack — MX$60 (MX$15 a check)" with a navy "Get the pack" button; "30-day pass — MX$49 — unlimited checks, no auto-renew" with an outlined button. A thin dashed line between the free card and the paid cards labeled "Free / paid line: paying never changes the answer". Bottom: a small card "What payers actually did" with four counters: "No", "Said yes", "Asked for the pack", "Paid".*
 
 ## 5. The flow (Mermaid)
 
-### Flowchart
+### Flowchart: a check under the free/paid line
 
 ```mermaid
 flowchart TD
-    A[Buyer with a long cart, about to pay] --> B[Takes 1 to 4 screenshots of the same cart]
-    B --> C[Selects them all on /product]
-    C --> D[Each image resized and read separately by /api/extract]
-    D --> E["lib/merge.ts: one check; a line seen in two screenshots counts once (names and sizes normalized)"]
-    E --> F{Store name visible?}
-    F -- no --> G["Flag: we couldn't see the store's name → type it under 'What we read'"]
-    F -- yes --> H[Match the store's return rule]
-    G --> H
-    H --> I[Step-5 engine: money at risk]
-    I --> J{"Items read + shipping = total on screen?"}
-    J -- no --> K["Show 'Not read from your screenshot yet: MX$X' + flag: add the rest of your cart"]
-    K --> L["+ Add another screenshot of this cart"]
-    L --> D
-    J -- yes --> M[Money at risk, flags with next steps]
-    M --> N{Buyer decides: wait / change size / buy anyway}
-    N --> O[("byp_events: closed list of events, no image, no prices, no store, no account")]
+    A[Buyer about to pay, opens /product] --> B{Fictional sample?}
+    B -- yes --> R[Read + engine, never counted]
+    B -- no --> C{Free check left this month on this device?}
+    C -- yes --> R
+    C -- no --> D{Pack or pass code saved on this device?}
+    D -- no --> G["Gate: 'Your free check for this month is used' → enter a code / see /pricing"]
+    G --> P[/pricing: today vs. plans, evidence ledger/]
+    P --> MP["Buyer pays the founder's Mercado Pago link (outside the app)"]
+    MP --> F[Founder sends a code by message]
+    F --> E[Buyer enters the code]
+    E --> V{"byp_use_check(code) in Supabase: valid, checks left or pass not expired?"}
+    D -- yes --> V
+    V -- no --> G
+    V -- yes --> R
+    R --> S["Same analyze() for everyone: money at risk, rule, flags, next step (no plan input)"]
+    S --> T{Decision: wait / change size / buy anyway}
+    R -. read OK, paid check .-> U["Code: pack −1 check · pass: first use starts 30 days"]
 ```
 
 ### Swimlane: who does what
@@ -56,77 +68,84 @@ flowchart TD
 sequenceDiagram
     actor Buyer
     participant App as Before You Pay (browser)
-    participant API as /api/extract (server)
-    participant AI as Gemini vision
-    participant Merge as merge + Step-5 engine (rules)
-    participant Log as byp_events (insert-only)
-    Buyer->>App: Selects 2 screenshots of one cart
-    App->>Log: upload_started
-    par one request per screenshot
-        App->>API: Screenshot 1 (resized, not stored)
-        API->>AI: "Extract only what is visible"
-        AI-->>API: Items, sizes, prices, total
-    and
-        App->>API: Screenshot 2
-        API->>AI: "Extract only what is visible"
-        AI-->>API: Items, sizes, prices, total
-    end
-    API-->>App: Two sanitized readings
-    App->>Merge: Merge (overlap counted once) + match return rule
-    Merge-->>App: Money at risk, unread amount, flags with next steps
-    App->>Log: read_ok (rule known: yes/no)
-    Buyer->>App: Decision
-    App->>Log: decision_wait / change_size / buy_anyway
-    Note over App,Log: The log never holds the image, item names, prices, store name or account
+    participant DB as Supabase (RLS + RPC)
+    actor Founder
+    participant MP as Mercado Pago (founder's link)
+    Buyer->>App: Upload checkout screenshot (2nd real check this month)
+    App->>App: Free counter for this month = used
+    App-->>Buyer: Gate: enter a code or see plans
+    Buyer->>App: Opens /pricing (what you do today → plans → ledger)
+    Buyer->>MP: Pays MX$60 (pack) or MX$49 (30-day pass)
+    MP-->>Founder: Payment notice
+    Founder->>Founder: Logs "paid" in the evidence ledger
+    Founder-->>Buyer: Sends a one-time code (BYP-XXXX-XXXX)
+    Buyer->>App: Enters the code
+    App->>DB: byp_use_check(code, consume=false)
+    DB-->>App: valid · pack 4 left (or pass)
+    App->>App: Same read + same engine as a free check
+    App->>DB: byp_use_check(code, consume=true) after a successful read
+    DB-->>App: pack 3 left
+    App-->>Buyer: Identical answer + "3 checks left on your pack"
+    Note over App,DB: The code is stored only as a SHA-256 hash.<br/>No name, email or payment data in Supabase.
+```
+
+### Flowchart: the simulator
+
+```mermaid
+flowchart LR
+    I["Inputs: monthly checkers · pack and pass conversion · prices · checks per user · issuer cardholders"] --> L["lib/pricing.ts (the same assumptions file /pricing and the memo use)"]
+    L --> O["Monthly: revenue by plan − Mercado Pago fees − AI cost − upkeep hours"]
+    O --> Y[Annual = monthly × 12 · break-even checkers · 10:1 threshold per plan]
+    Y --> SV{Signed in?}
+    SV -- yes --> DBS[("byp_scenarios: name + inputs, own rows only (RLS)")]
+    SV -- no --> X[Presets only: pessimistic · base · optimistic]
 ```
 
 ## 6. Benchmark line
 
-- **The best existing solution on Earth for this is** the EU's 14-day right of withdrawal for online purchases (Directive 2011/83/EU), which since June 19, 2026 also requires an easy electronic withdrawal button: the return right is a visible default, not fine print.
-- **Mine differs or localizes by** bringing that visibility to Mexico from the **buyer's side**, before paying, for any store, from screenshots she already has, under each store's own published rule (Mexico's legal floor, LFPC Art. 56, is shorter and almost never shown at checkout), and without taking a peso from stores.
+- **The best existing solution on Earth for this is** Consumer Reports' member-funded model: buyers pay, sellers never do (no advertiser since 1936, ~70% of revenue from ~4M paying members); for the loss itself, Amex Return Protection already refunds up to US$300 an item when a store refuses a return within 90 days.
+- **Mine differs or localizes by** pricing one check at the moment of paying, in pesos, in Mexico, buyer-side, for the buyers who don't have a premium card, and by publishing who actually paid next to the price.
 
 ## 7. The long view (3 years)
 
-If this slice works, Before You Pay is the check Mexicans run in the ten seconds before paying, from the phone's share sheet in any store, Instagram or TikTok checkout. It reads the **whole** cart, however long, and keeps a public, dated, correctable registry of return rules for the sellers Mexicans actually buy from (the seller, not the brand: Brownie on Palacio's site follows Palacio's rule). It's funded by buyers, never by stores, so "wait" stays a valid answer.
+If this slice works, the free check stays the honest default and paid checks fund the one thing the model can't do: keeping a sourced, dated return-rule table for the stores Mexicans buy from. The 30-day pass becomes a benefit card issuers buy per cardholder, so a buyer with a basic card gets the same check a Platinum holder would. The pricing ledger stays public, so the product's own claims about demand can be checked the same way it checks a store's claims.
 
 ## 8. Scope cut (what I am NOT building this week)
 
-- No Spanish version yet (pain #3). The fix is a real translation, not the browser's machine translation, and it's next week's test.
-- No automatic store detection from logos or colors; the buyer types it when it isn't printed.
-- No fit prediction, body measurements or product recommendations (Charter non-goals).
-- No saving screenshots, ever. More than four screenshots per check isn't supported (yet).
-- No user-facing analytics page. Events are read by the founder only, reported by day.
+- **No in-app payments or webhooks.** Payment happens on the founder's Mercado Pago link; the founder issues a code by hand. Fine at 5 buyers; not at 500.
+- **No auto-renewing subscription.** The "monthly" plan is a 30-day pass that ends by itself.
+- **Return-window alerts are not sold.** They aren't built (Blueprint Condition 6).
+- **No issuer integration.** The issuer is a line on /pricing marked as a bet.
+- **No server-side metering of /api/extract.** The free limit is per device in the browser; a determined user can clear it. Logged as a known limit.
+- **No Spanish UI yet** (W13 pain #3, still logged).
 
 ## 9. Architecture + stack
 
-| Layer | Choice | Week 13 change |
+| Layer | Choice | Notes |
 |---|---|---|
-| Framework / hosting | Next.js 15 + Tailwind v4 on Vercel, auto-deploy from `main`, real domain beforeyoupay.xyz | 4 deploys this week |
-| Vision | Gemini Flash via `/api/extract`, strict JSON schema, one request per screenshot | Called in parallel for up to 4 screenshots |
-| Merge | **`lib/merge.ts`** (new): merges readings; overlap rule with normalized names and sizes | New |
-| Engine | `lib/engine.ts`, deterministic, unit-tested | New `unread` amount + `items-missing` and `no-store` flags |
-| Return rules | `lib/policies.ts` | Added El Palacio de Hierro (domain + name aliases) |
-| Analytics / feedback (stack floor) | **Supabase `byp_events`** (new) via `lib/track.ts`: closed list of 14 events + rule known + language + phone/desktop. Insert-only RLS for the public key; nobody can read it through the app | New |
-| Auth / data | Supabase Google sign-in, `byp_checks` with RLS (from Week 12) | Unchanged |
-| Secrets | `GEMINI_API_KEY` only in Vercel env | Unchanged |
+| App | Next.js 15 (App Router) + Tailwind v4 on Vercel | Same stack; repo `KaromBuilds/before-you-pay`, domain beforeyoupay.xyz |
+| One source of truth | `lib/pricing.ts` | Plans, prices, fees, every assumption with M/S/A tag and source, `tenToOne()`, `simulate()`. Used by /pricing, /simulator and the /about memo, so the three can't disagree. |
+| Evidence | `lib/evidence.ts` | Pricing conversations, each in exactly one outcome column. Roles, never names (Condition 5). |
+| Free limit + codes | `lib/quota.ts` + Supabase `byp_codes` + RPC `byp_use_check` (security definer) | Codes stored as SHA-256 only; no table access through the public key. Switch: `FREE_LIMIT_ON`. |
+| Saved scenarios | Supabase `byp_scenarios` (RLS: own rows only) | Google sign-in (security floor #2); name ≤ 60 chars, numeric ranges validated in the browser and in SQL. |
+| Event log | `byp_events` + new events: pricing_view, plan clicks, gate_shown, code_ok/code_bad, scenario_saved | Still no personal data. |
+| AI | Gemini Flash-Lite reads the screenshot only | ≈US$0.003 per screenshot; the engine decides. |
+| Secrets | `GEMINI_API_KEY` in Vercel env only | Supabase publishable key is public by design; RLS protects rows. |
 
 ## 10. Test plan
 
-| # | Test | Expected | Result |
-|---|---|---|---|
-| T1 | Session-2 numbers: 3 items read (MX$4,997), total MX$9,492, no store | `unread` = MX$4,495, "items-missing" is the first flag, "no-store" flag shown | ✅ unit + live |
-| T2 | Items + shipping match the total | No unread warning | ✅ unit |
-| T3 | Two screenshots, one line in both | That line counts once; store and total taken from the screenshots that show them | ✅ unit + live |
-| T4 | Two identical lines inside ONE screenshot | Both kept (real duplicates) | ✅ unit |
-| T5 | Reader says "M" in one screenshot and "Talla M" in the next | Same line, counted once | ❌ live → fixed → ✅ |
-| T6 | Palacio checkout, reader returns "elpalaciodehierro.com" | Palacio rule applies (full-price sweater: MX$1,599 → MX$0 at risk) | ✅ unit |
-| T7 | Event log | Anonymous insert works; anonymous read returns `[]`; unknown event rejected (400) | ✅ live |
-| T8 | All Week 12 engine tests | Still pass | ✅ 19/19 |
-
-## 11. Test → fix → redeploy (this week)
-
-1. **Mechanical pass (Nov 5):** my own real Palacio checkouts showed the store read as "elpalaciodehierro.com" and no rule → 100% at risk. Fixed (rule + aliases), redeployed.
-2. **Real users (Nov 5):** two sessions found the long-cart pain (ranked #1). Fixed (multi-screenshot + unread warning + missing-store prompt), redeployed Nov 8.
-3. **Live re-test (Nov 8):** found the "M" vs "Talla M" double count. Fixed, redeployed, regression test added.
-
-User sessions, quotes and pain ranking: [`USERS_W13.md`](USERS_W13.md).
+| # | Test | Pass |
+|---|---|---|
+| T1 | `tenToOne(15)` threshold | MX$625; Hot Fashion order MX$989 → 15.8:1; MX$25 → 9.5:1 |
+| T2 | Mercado Pago fee | MX$15 → MX$5.25; MX$60 → MX$7.07; MX$49 → MX$6.62 |
+| T3 | `simulate()` base preset | Monthly and annual add up; net = revenue − fees − AI − upkeep |
+| T4 | Simulator input validation | Negative, NaN and huge values rejected/clamped |
+| T5 | **Identical answer** | `analyze()` takes no plan; free and paid runs of the same cart are deep-equal |
+| T6 | Free limit | 1st real check this month passes; 2nd shows the gate; sample never counts; new month resets |
+| T7 | Pack code | Valid code → 4 checks, decrements only after a successful read; 5th use refused |
+| T8 | Pass code | First use starts 30 days; unlimited inside; refused after expiry |
+| T9 | Bad code | Unknown code refused; table not readable with the public key |
+| T10 | Saved scenarios | Save, reload, delete while signed in; anonymous read of `byp_scenarios` returns `[]` |
+| T11 | Ledger | Each entry counted in exactly one column; "paid" counts only real payments |
+| T12 | Memo = pricing = simulator | All three read the same numbers from `lib/pricing.ts` |
+| T13 | Signed-out links | /pricing, /simulator, /about open for someone not signed in |
