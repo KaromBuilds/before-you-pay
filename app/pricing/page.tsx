@@ -72,14 +72,14 @@ export default function Pricing() {
             <Link href="/product" className="mt-4 block rounded-xl border border-navy px-4 py-3 text-center font-semibold text-navy hover:bg-paper">Use my free check</Link>
           </Card>
           <Card className="border-navy">
-            <p className="text-xs font-semibold uppercase text-warn">Segment 1 · sale-season buyer</p>
+            <p className="text-xs font-semibold uppercase text-warn">Segment 1 · for when you buy in sales</p>
             <h3 className="mt-1 text-lg font-bold text-navy">{PLANS.pack.name}</h3>
             <p className="text-3xl font-extrabold text-navy">{money(PLANS.pack.price)}</p>
             <p className="mt-1 text-sm text-mute">{PLANS.pack.unit}. A check is only used when your screenshot is read.</p>
             <RequestButton plan="pack" primary />
           </Card>
           <Card>
-            <p className="text-xs font-semibold uppercase text-warn">Segment 2 · buys a lot, or for several people</p>
+            <p className="text-xs font-semibold uppercase text-warn">Segment 2 · you buy a lot, or for your family</p>
             <h3 className="mt-1 text-lg font-bold text-navy">{PLANS.pass.name}</h3>
             <p className="text-3xl font-extrabold text-navy">{money(PLANS.pass.price)}</p>
             <p className="mt-1 text-sm text-mute">{PLANS.pass.unit}.</p>

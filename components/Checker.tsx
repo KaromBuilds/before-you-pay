@@ -316,7 +316,7 @@ export default function Checker() {
         {FREE_LIMIT_ON && (
           <p className="mt-3 text-xs text-mute">
             {free > 0 ? "Your free check this month: 1 left on this device." : "Free check this month: used."}
-            {code && codeInfo ? ` ${describeCode(codeInfo)}` : ""}{" "}
+            {code && codeInfo ? <b className={codeInfo.ok ? "text-ok" : "text-warn"}> {codeInfo.ok ? "Code active. " : ""}{describeCode(codeInfo)}</b> : ""}{" "}
             <Link href="/pricing" className="underline">Plans</Link> · paying never changes the answer.
           </p>
         )}
@@ -326,8 +326,14 @@ export default function Checker() {
         <Card className="border-warn">
           <h2 className="font-bold text-navy">Your free check for {new Date(monthKey() + "-01T12:00:00").toLocaleDateString("en-US", { month: "long" })} is used on this device</h2>
           <p className="mt-1 text-sm text-mute">
-            A paid check gives exactly the same answer as the free one. Enter a pack or pass code, or see the plans. The fictional sample is always free.
+            A paid check gives exactly the same answer as the free one. The fictional sample is always free.
           </p>
+          {/* Week 14 persona test (Rocío, 51): "¿Código? ¿De dónde lo saco?" She quit here. The gate now says how a code is obtained. */}
+          <ol className="mt-2 list-decimal space-y-0.5 pl-5 text-sm">
+            <li><Link href="/pricing" className="font-semibold text-navy underline">Choose a plan</Link> and tap “Request”: 4 checks for MX$60, or 30 days for MX$49.</li>
+            <li>Pay the founder by bank transfer or cash. Nothing is charged on this site.</li>
+            <li>You get a code by message (WhatsApp or email). Enter it here.</li>
+          </ol>
           <div className="mt-3 flex gap-2">
             <input
               value={codeInput}
