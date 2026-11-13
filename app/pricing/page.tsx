@@ -31,32 +31,32 @@ export default function Pricing() {
       {/* Team 5 Condition 1: reconstruct today's task and alternatives BEFORE showing a price. */}
       <Card>
         <h2 className="text-xl font-bold text-navy">What you do today, and what it costs</h2>
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <thead className="text-xs uppercase text-mute">
-              <tr><th className="py-2 pr-3">What you do</th><th className="py-2 pr-3">Money</th><th className="py-2 pr-3">Time</th><th className="py-2">Risk</th></tr>
-            </thead>
-            <tbody className="divide-y divide-line align-top">
-              <tr>
-                <td className="py-2 pr-3 font-semibold">Guess the size and pay</td>
-                <td className="py-2 pr-3">If it doesn’t fit and the item is final sale or the rule is unknown, the whole item. A real Week 13 cart had {money(F.w13Cart.value)} at risk<Tag t="M" />; I lost {money(F.founderLoss.value)}<Tag t="M" />.</td>
-                <td className="py-2 pr-3">None now. The surprise comes when the package arrives.</td>
-                <td className="py-2">You find out after paying.</td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-3 font-semibold">Read the store’s return page yourself</td>
-                <td className="py-2 pr-3">Free.</td>
-                <td className="py-2 pr-3">5–10 minutes per store<Tag t="A" />.</td>
-                <td className="py-2">Often silent on sale items (Zara) or contradicts itself (Palacio)<Tag t="M" />. Unknown stays unknown.</td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-3 font-semibold">Buy two sizes, return one</td>
-                <td className="py-2 pr-3">Twice the money tied up, plus return costs: Zara charges {money(F.zaraDropOff.value)} at a drop-off point (free in store)<Tag t="S" />.</td>
-                <td className="py-2 pr-3">A trip to a store or drop-off point.</td>
-                <td className="py-2">Only works if the store takes returns. The legal floor online is {F.art56Days.value} business days, freight paid by you<Tag t="S" />.</td>
-              </tr>
-            </tbody>
-          </table>
+        {/* Cards, not a table: the Risk column was cut off on phones (Week 14 mechanical pass). */}
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-line bg-paper p-3">
+            <h3 className="font-semibold text-navy">Guess the size and pay</h3>
+            <dl className="mt-1 space-y-1 text-sm">
+              <div><dt className="inline font-semibold">Money: </dt><dd className="inline">If it doesn’t fit and the item is final sale or the rule is unknown, the whole item. A real Week 13 cart had {money(F.w13Cart.value)} at risk<Tag t="M" />; I lost {money(F.founderLoss.value)}<Tag t="M" />.</dd></div>
+              <div><dt className="inline font-semibold">Time: </dt><dd className="inline">None now. The surprise comes when the package arrives.</dd></div>
+              <div><dt className="inline font-semibold">Risk: </dt><dd className="inline">You find out after paying.</dd></div>
+            </dl>
+          </div>
+          <div className="rounded-xl border border-line bg-paper p-3">
+            <h3 className="font-semibold text-navy">Read the store’s return page yourself</h3>
+            <dl className="mt-1 space-y-1 text-sm">
+              <div><dt className="inline font-semibold">Money: </dt><dd className="inline">Free.</dd></div>
+              <div><dt className="inline font-semibold">Time: </dt><dd className="inline">5–10 minutes per store<Tag t="A" />.</dd></div>
+              <div><dt className="inline font-semibold">Risk: </dt><dd className="inline">Often silent on sale items (Zara) or contradicts itself (Palacio)<Tag t="M" />. Unknown stays unknown.</dd></div>
+            </dl>
+          </div>
+          <div className="rounded-xl border border-line bg-paper p-3">
+            <h3 className="font-semibold text-navy">Buy two sizes, return one</h3>
+            <dl className="mt-1 space-y-1 text-sm">
+              <div><dt className="inline font-semibold">Money: </dt><dd className="inline">Twice the money tied up, plus return costs: Zara charges {money(F.zaraDropOff.value)} at a drop-off point (free in store)<Tag t="S" />.</dd></div>
+              <div><dt className="inline font-semibold">Time: </dt><dd className="inline">A trip to a store or drop-off point.</dd></div>
+              <div><dt className="inline font-semibold">Risk: </dt><dd className="inline">Only works if the store takes returns. The legal floor online is {F.art56Days.value} business days, freight paid by you<Tag t="S" />.</dd></div>
+            </dl>
+          </div>
         </div>
         <p className="mt-3 rounded-lg bg-paper px-3 py-2 text-sm"><b className="text-navy">Next step:</b> use your free check on the cart you’re about to pay. <Link href="/product" className="font-semibold underline">Check a checkout</Link></p>
       </Card>

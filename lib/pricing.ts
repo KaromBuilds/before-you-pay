@@ -228,4 +228,4 @@ export function simulate(raw: SimInputs): SimResult {
 
 export const money = (n: number, digits = 0) =>
   (n < 0 ? "−" : "") + "MX$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
-export const ratio = (r: number) => (Number.isFinite(r) ? `${r.toFixed(1)}:1` : "∞");
+export const ratio = (r: number) => (Number.isFinite(r) ? `${r >= 20 ? r.toFixed(0) : r.toFixed(1)}:1` : "∞");

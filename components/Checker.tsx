@@ -105,6 +105,11 @@ export default function Checker() {
 
   // Fictional sample from ?sample=1, or a check restored after the Google sign-in redirect.
   useEffect(() => {
+    // Week 14 mechanical-pass fix: read the free counter and any saved code BEFORE the sign-in restore below returns,
+    // or the status line said "1 left" after a Google sign-in even when the free check was already used.
+    setFree(freeLeft());
+    const c = savedCode();
+    if (c) { setCode(c); codeStatus(c).then(setCodeInfo); }
     try {
       const raw = sessionStorage.getItem(PENDING);
       if (raw) {
@@ -118,9 +123,6 @@ export default function Checker() {
       }
     } catch {}
     track("page_view", { onlyOnce: true });
-    setFree(freeLeft());
-    const c = savedCode();
-    if (c) { setCode(c); codeStatus(c).then(setCodeInfo); }
     if (params.get("sample") === "1") { track("sample_used"); start({ ...DEMO_EXTRACTION, checkedAt: today() }); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
