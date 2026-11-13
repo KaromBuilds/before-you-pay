@@ -12,6 +12,9 @@ import { DEMO_EXTRACTION } from "@/lib/demo";
 import { supabase } from "@/lib/supabase";
 import { toRow } from "@/lib/validate";
 import { signIn, useUser } from "./AuthButton";
+import { freeLeft, markFreeUsed, monthKey, normalizeCode } from "@/lib/quota";
+import { codeStatus, describeCode, saveCode, savedCode, type CodeStatus } from "@/lib/codes";
+import { FREE_LIMIT_ON } from "@/lib/pricing";
 
 const today = () => new Date().toISOString().slice(0, 10);
 const PENDING = "byp.pending.v2";
@@ -81,6 +84,13 @@ export default function Checker() {
   const [decision, setDecision] = useState<Decision | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [saveMsg, setSaveMsg] = useState("");
+  // Week 14 · free/paid line. These decide HOW MANY checks, never WHAT a check says (the engine never sees them).
+  const [gate, setGate] = useState(false);
+  const [code, setCode] = useState<string | null>(null);
+  const [codeInfo, setCodeInfo] = useState<CodeStatus | null>(null);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeBusy, setCodeBusy] = useState(false);
+  const [free, setFree] = useState<number>(1);
   const resultRef = useRef<HTMLDivElement>(null);
 
   function start(e: Extraction) {
@@ -108,6 +118,9 @@ export default function Checker() {
       }
     } catch {}
     track("page_view", { onlyOnce: true });
+    setFree(freeLeft());
+    const c = savedCode();
+    if (c) { setCode(c); codeStatus(c).then(setCodeInfo); }
     if (params.get("sample") === "1") { track("sample_used"); start({ ...DEMO_EXTRACTION, checkedAt: today() }); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -140,10 +153,45 @@ export default function Checker() {
   }
   let previewSet = false;
 
+  async function applyCode() {
+    setCodeBusy(true);
+    const s = await codeStatus(codeInput);
+    setCodeBusy(false);
+    setCodeInfo(s);
+    if (s.ok) {
+      const norm = normalizeCode(codeInput)!;
+      setCode(norm);
+      saveCode(norm);
+      setGate(false);
+      setCodeInput("");
+      track("code_ok");
+    } else track("code_bad");
+  }
+
+  /** Which allowance pays for a NEW cart: the free check, a code, or nothing (gate). Adding screenshots to the same cart is free. */
+  async function allowance(): Promise<"free" | "code" | null> {
+    if (!FREE_LIMIT_ON || freeLeft() > 0) return "free";
+    if (code) {
+      const s = await codeStatus(code);
+      setCodeInfo(s);
+      if (s.ok) return "code";
+    }
+    return null;
+  }
+
   async function onFiles(list: FileList | null, append: boolean) {
     setError(null);
     const files = list ? Array.from(list).slice(0, 4) : [];
     if (!files.length) return;
+    let paidBy: "free" | "code" | null = null;
+    if (!append || !ex || ex.source !== "screenshot") {
+      paidBy = await allowance();
+      if (!paidBy) {
+        setGate(true);
+        track("gate_shown");
+        return;
+      }
+    }
     setBusy(true);
     track("upload_started");
     previewSet = append;
@@ -165,6 +213,9 @@ export default function Checker() {
       if (bad.length) setError(`We read ${ok.length} of ${files.length} screenshots. ${bad[0].error}`);
       const merged = mergeExtractions(append && ex && ex.source === "screenshot" ? [ex, ...ok] : ok);
       track("read_ok", { ruleKnown: !!findRule(merged.store) });
+      // A check is used only when a screenshot was actually read.
+      if (paidBy === "free") { markFreeUsed(); setFree(freeLeft()); }
+      if (paidBy === "code" && code) { codeStatus(code, true).then(setCodeInfo); track("paid_check"); }
       if (append && ex) {
         setEx(merged);
         setDecision(null);
@@ -232,7 +283,7 @@ export default function Checker() {
       <div>
         <h1 className="text-2xl font-extrabold text-navy sm:text-3xl">Check before you pay</h1>
         <p className="mt-1 text-mute">Upload a screenshot of your cart or payment screen. We read it and never keep the image.</p>
-        <p className="mt-1 text-sm font-semibold text-ok">No account needed to check.</p>
+        <p className="mt-1 text-sm font-semibold text-ok">No account needed to check. 1 full check a month is free.</p>
       </div>
 
       <Card>
@@ -260,7 +311,43 @@ export default function Checker() {
           <a href="/sample-checkout.png" download className="text-xs text-mute underline">Download a fictional checkout to upload</a>
         </div>
         {error && <p className="mt-3 rounded-lg bg-warn-bg px-3 py-2 text-sm text-warn">{error}</p>}
+        {FREE_LIMIT_ON && (
+          <p className="mt-3 text-xs text-mute">
+            {free > 0 ? "Your free check this month: 1 left on this device." : "Free check this month: used."}
+            {code && codeInfo ? ` ${describeCode(codeInfo)}` : ""}{" "}
+            <Link href="/pricing" className="underline">Plans</Link> · paying never changes the answer.
+          </p>
+        )}
       </Card>
+
+      {gate && (
+        <Card className="border-warn">
+          <h2 className="font-bold text-navy">Your free check for {new Date(monthKey() + "-01T12:00:00").toLocaleDateString("en-US", { month: "long" })} is used on this device</h2>
+          <p className="mt-1 text-sm text-mute">
+            A paid check gives exactly the same answer as the free one. Enter a pack or pass code, or see the plans. The fictional sample is always free.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <input
+              value={codeInput}
+              onChange={(e) => setCodeInput(e.target.value.slice(0, 20))}
+              placeholder="BYP-XXXX-XXXX"
+              autoCapitalize="characters"
+              className={input}
+            />
+            <button onClick={applyCode} disabled={codeBusy || codeInput.trim().length < 8} className="shrink-0 rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white disabled:opacity-40">
+              {codeBusy ? "Checking…" : "Use code"}
+            </button>
+          </div>
+          {codeInfo && !codeInfo.ok && <p className="mt-2 text-sm text-warn">{describeCode(codeInfo)}</p>}
+          <div className="mt-3 flex flex-wrap gap-4 text-sm">
+            <Link href="/pricing" className="font-semibold text-navy underline">See plans: 4 checks for MX$60 · 30 days for MX$49</Link>
+            <button onClick={() => { setGate(false); setPreview(null); track("sample_used"); start({ ...DEMO_EXTRACTION, checkedAt: today() }); }} className="text-navy underline">
+              Try the fictional sample
+            </button>
+          </div>
+        </Card>
+      )}
+
 
       {ex && result && rule && (
         <div ref={resultRef} className="scroll-mt-20 space-y-4">
