@@ -6,7 +6,11 @@ import { supabase } from "./supabase";
 export type TrackEvent =
   | "page_view" | "upload_started" | "read_ok" | "read_failed" | "sample_used"
   | "field_edited" | "details_opened" | "policy_pasted" | "policy_link_opened"
-  | "decision_wait" | "decision_change_size" | "decision_buy_anyway" | "saved" | "lang_switched";
+  | "decision_wait" | "decision_change_size" | "decision_buy_anyway" | "saved" | "lang_switched"
+  // Week 14 · pricing: page views, plan buttons, the free/paid gate, codes, requests, simulator. Still no personal data.
+  | "pricing_view" | "plan_pack_clicked" | "plan_pass_clicked" | "plan_issuer_clicked"
+  | "gate_shown" | "code_ok" | "code_bad" | "paid_check" | "pack_requested"
+  | "simulator_view" | "scenario_saved";
 
 let visit: string | null = null;
 const visitId = () => {

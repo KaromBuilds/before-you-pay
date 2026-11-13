@@ -20,7 +20,7 @@ export default function Home() {
             Try the fictional sample
           </Link>
         </div>
-        <p className="mt-3 text-xs text-mute">Free. No account needed to check. Sign in with Google only to save your history.</p>
+        <p className="mt-3 text-xs text-mute">1 full check a month is free. No account needed to check. <Link href="/pricing" className="underline">Plans</Link></p>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-3">

@@ -21,7 +21,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </Link>
             <nav className="flex items-center gap-3 text-sm sm:gap-5">
               <Link href="/product" className="font-semibold text-navy hover:underline">Check</Link>
-              <Link href="/history" className="text-mute hover:text-navy">History</Link>
+              <Link href="/pricing" className="text-mute hover:text-navy">Pricing</Link>
+              <Link href="/history" className="hidden text-mute hover:text-navy sm:inline">History</Link>
               <Link href="/about" className="hidden text-mute hover:text-navy sm:inline">About</Link>
               <AuthButton />
             </nav>
@@ -32,6 +33,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="mx-auto flex max-w-3xl flex-wrap justify-between gap-2 px-4 py-5 text-xs text-mute">
             <span>No store pays us. No affiliate links. We never recommend a product.</span>
             <span className="flex gap-3">
+              <Link href="/pricing" className="hover:text-navy">Pricing</Link>
+              <Link href="/simulator" className="hover:text-navy">Simulator</Link>
+              <Link href="/history" className="hover:text-navy">History</Link>
               <Link href="/about" className="hover:text-navy">About</Link>
               <Link href="/privacy" className="hover:text-navy">Privacy</Link>
               <a href="https://github.com/KaromBuilds/before-you-pay" className="hover:text-navy">Code</a>
