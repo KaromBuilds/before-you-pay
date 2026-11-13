@@ -29,7 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </div>
         </header>
         <main className="mx-auto max-w-3xl px-4 pb-16 pt-6">{children}</main>
-        <footer className="border-t border-line bg-white">
+        <footer className="border-t border-line bg-white pb-16">
           <div className="mx-auto flex max-w-3xl flex-wrap justify-between gap-2 px-4 py-5 text-xs text-mute">
             <span>No store pays us. No affiliate links. We never recommend a product.</span>
             <span className="flex gap-3">
