@@ -37,7 +37,7 @@ export function track(event: TrackEvent, opts: { ruleKnown?: boolean | null; lan
   }
   const device = window.matchMedia?.("(max-width: 640px)").matches ? "phone" : "desktop";
   supabase
-    .from("byp_events")
+    .from("byp_events_v2")
     .insert({ visit: visitId(), event, rule_known: opts.ruleKnown ?? null, lang: opts.lang ?? null, device })
     .then(() => {}, () => {});
 }

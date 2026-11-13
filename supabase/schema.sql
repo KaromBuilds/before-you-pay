@@ -55,18 +55,29 @@ create policy "byp events anon insert" on public.byp_events for insert to anon, 
 create index if not exists byp_events_created on public.byp_events (created_at desc);
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- Week 14 · Pricing. Run once in the Supabase SQL editor (after the sections above).
+-- Week 14 · Pricing. Run once in the Supabase SQL editor (after the sections above). Nothing in it drops or deletes.
 
--- 1) New anonymous events (pricing page, plan buttons, the free/paid gate, codes, simulator).
-alter table public.byp_events drop constraint if exists byp_events_event_check;
-alter table public.byp_events add constraint byp_events_event_check check (event in (
-  'page_view', 'upload_started', 'read_ok', 'read_failed', 'sample_used',
-  'field_edited', 'details_opened', 'policy_pasted', 'policy_link_opened',
-  'decision_wait', 'decision_change_size', 'decision_buy_anyway', 'saved', 'lang_switched',
-  'pricing_view', 'plan_pack_clicked', 'plan_pass_clicked', 'plan_issuer_clicked',
-  'gate_shown', 'code_ok', 'code_bad', 'paid_check', 'pack_requested',
-  'simulator_view', 'scenario_saved'
-));
+-- 1) Event log v2: the same anonymous columns as byp_events, plus the pricing events (pricing page, plan buttons,
+-- the free/paid gate, codes, requests, simulator). A new table instead of altering v1, so nothing is dropped; v1 stays as history.
+create table if not exists public.byp_events_v2 (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  visit text not null check (visit ~ '^[a-z0-9]{8,16}$'),
+  event text not null check (event in (
+    'page_view', 'upload_started', 'read_ok', 'read_failed', 'sample_used',
+    'field_edited', 'details_opened', 'policy_pasted', 'policy_link_opened',
+    'decision_wait', 'decision_change_size', 'decision_buy_anyway', 'saved', 'lang_switched',
+    'pricing_view', 'plan_pack_clicked', 'plan_pass_clicked', 'plan_issuer_clicked',
+    'gate_shown', 'code_ok', 'code_bad', 'paid_check', 'pack_requested',
+    'simulator_view', 'scenario_saved'
+  )),
+  rule_known boolean,
+  lang text check (lang is null or lang in ('en', 'es')),
+  device text check (device is null or device in ('phone', 'desktop'))
+);
+alter table public.byp_events_v2 enable row level security;
+create policy "byp events v2 anon insert" on public.byp_events_v2 for insert to anon, authenticated with check (true);
+create index if not exists byp_events_v2_created on public.byp_events_v2 (created_at desc);
 
 -- 2) Saved simulator scenarios (stack floor). Own rows only; a scenario holds numbers, never personal data.
 create table if not exists public.byp_scenarios (
@@ -77,9 +88,6 @@ create table if not exists public.byp_scenarios (
   inputs jsonb not null check (jsonb_typeof(inputs) = 'object' and pg_column_size(inputs) < 4000)
 );
 alter table public.byp_scenarios enable row level security;
-drop policy if exists "byp scen own select" on public.byp_scenarios;
-drop policy if exists "byp scen own insert" on public.byp_scenarios;
-drop policy if exists "byp scen own delete" on public.byp_scenarios;
 create policy "byp scen own select" on public.byp_scenarios for select to authenticated using (auth.uid() = user_id);
 create policy "byp scen own insert" on public.byp_scenarios for insert to authenticated with check (auth.uid() = user_id);
 create policy "byp scen own delete" on public.byp_scenarios for delete to authenticated using (auth.uid() = user_id);
@@ -99,9 +107,6 @@ create table if not exists public.byp_pack_requests (
   status text not null default 'new' check (status in ('new', 'contacted', 'paid', 'declined'))
 );
 alter table public.byp_pack_requests enable row level security;
-drop policy if exists "byp req own select" on public.byp_pack_requests;
-drop policy if exists "byp req own insert" on public.byp_pack_requests;
-drop policy if exists "byp req own delete" on public.byp_pack_requests;
 create policy "byp req own select" on public.byp_pack_requests for select to authenticated using (auth.uid() = user_id);
 create policy "byp req own insert" on public.byp_pack_requests for insert to authenticated
   with check (auth.uid() = user_id and status = 'new' and contact_email = (auth.jwt() ->> 'email'));
@@ -168,5 +173,4 @@ begin
   return json_build_object('ok', true, 'kind', 'pass', 'expires_at', r.expires_at, 'pass_days', r.pass_days);
 end;
 $$;
-revoke all on function public.byp_use_check(text, boolean) from public;
 grant execute on function public.byp_use_check(text, boolean) to anon, authenticated;
