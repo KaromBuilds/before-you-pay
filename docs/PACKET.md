@@ -164,6 +164,7 @@ If this slice works, the free check stays the honest default and paid checks fun
 | T8 pass code, live | **Pass** | First use set the end date exactly 30 days later; later uses keep it |
 | T9/T10 RLS, live | **Pass** | Public key: `byp_codes`, `byp_scenarios`, `byp_pack_requests` all read `[]`; anonymous request insert → 401 (RLS); unknown code → "unknown"; bad format → "format" |
 | Reader on the new host | **Pass** | `/api/extract` on Netlify read the fictional sample in 2.8 s with gemini-3.5-flash-lite |
+| T10 saved scenarios, live | **Pass** | Signed in on beforeyoupay.xyz (Nov 14): saved a scenario, reloaded the page and it was still there, loaded it, deleted it, reloaded: gone |
 | T13 signed-out links | **Pass** | /pricing, /product, /simulator, /about open on beforeyoupay.xyz in a signed-out browser |
 
 **Bugs found and fixed:**
