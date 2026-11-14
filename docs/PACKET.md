@@ -3,6 +3,7 @@
 **Founder:** Karom Asael González Martínez · Team 5 · Money this week
 **Venture:** Before You Pay, live at **beforeyoupay.xyz**. See [`CHARTER.md`](CHARTER.md) and [`PERSONAS.md`](PERSONAS.md). Earlier packets: [`w12/`](w12/PACKET.md), [`w13/`](w13/PACKET.md).
 **Team 5 Week 14 Blueprint conditions this build must honor:**
+
 1. Reconstruct the current task and alternatives **before** showing a price: buyer, budget owner, unit, full cost, next action.
 2. Record **rejection, stated interest, requests and paid commitments separately**. No hypothetical yes becomes demand or revenue.
 3. Compare like for like. **10:1 is a hypothesis** until real baselines are measured; show proxies and uncertainty.
@@ -44,22 +45,23 @@ Image-generation prompt used:
 ```mermaid
 flowchart TD
     A[Buyer about to pay, opens /product] --> B{Fictional sample?}
-    B -- yes --> R[Read + engine, never counted]
-    B -- no --> C{Free check left this month on this device?}
+    B -- yes --> R[Read + engine]
+    B -- no --> C{Free check left this month?}
     C -- yes --> R
-    C -- no --> D{Pack or pass code saved on this device?}
-    D -- no --> G["Gate: 'Your free check for this month is used' → enter a code / see /pricing"]
-    G --> P[/pricing: today vs. plans, evidence ledger/]
-    P --> MP["Buyer pays the founder's Mercado Pago link (outside the app)"]
-    MP --> F[Founder sends a code by message]
-    F --> E[Buyer enters the code]
-    E --> V{"byp_use_check(code) in Supabase: valid, checks left or pass not expired?"}
-    D -- yes --> V
-    V -- no --> G
+    C -- no --> D{Code saved on this device?}
+    D -- yes --> V{"Code valid? (byp_use_check)"}
+    D -- no --> G["Gate: 3 steps to get a code · enter a code"]
+    G --> GET
+    subgraph GET [Getting a code: outside the answer]
+        direction LR
+        P[/pricing: today → plans → ledger/] --> Q["Request in the app (Google sign-in, consent)"] --> PAY["Pay the founder: transfer or cash"] --> F[Code by message]
+    end
+    GET --> V
+    V -- no --> X["Refused: unknown · used up · expired → back to the gate"]
     V -- yes --> R
-    R --> S["Same analyze() for everyone: money at risk, rule, flags, next step (no plan input)"]
-    S --> T{Decision: wait / change size / buy anyway}
-    R -. read OK, paid check .-> U["Code: pack −1 check · pass: first use starts 30 days"]
+    R --> S["analyze(ex, rule): no plan input, same answer for all"]
+    S --> T([Decision: wait · change size · buy anyway])
+    R -. paid check read OK .-> U["Pack −1 check · pass: first use starts 30 days"]
 ```
 
 ### Swimlane: who does what
@@ -70,13 +72,14 @@ sequenceDiagram
     participant App as Before You Pay (browser)
     participant DB as Supabase (RLS + RPC)
     actor Founder
-    participant MP as Mercado Pago (founder's link)
     Buyer->>App: Upload checkout screenshot (2nd real check this month)
     App->>App: Free counter for this month = used
-    App-->>Buyer: Gate: enter a code or see plans
-    Buyer->>App: Opens /pricing (what you do today → plans → ledger)
-    Buyer->>MP: Pays MX$60 (pack) or MX$49 (30-day pass)
-    MP-->>Founder: Payment notice
+    App-->>Buyer: Gate: how to get a code (3 steps) · enter a code
+    Buyer->>App: /pricing → "Request" the pack (Google sign-in)
+    App->>DB: insert byp_pack_requests (own row, status new)
+    Founder->>DB: Reads new requests (dashboard)
+    Founder-->>Buyer: Message: how to pay (transfer or cash)
+    Buyer-->>Founder: Pays MX$60 (pack) or MX$49 (30-day pass)
     Founder->>Founder: Logs "paid" in the evidence ledger
     Founder-->>Buyer: Sends a one-time code (BYP-XXXX-XXXX)
     Buyer->>App: Enters the code
@@ -86,7 +89,7 @@ sequenceDiagram
     App->>DB: byp_use_check(code, consume=true) after a successful read
     DB-->>App: pack 3 left
     App-->>Buyer: Identical answer + "3 checks left on your pack"
-    Note over App,DB: The code is stored only as a SHA-256 hash.<br/>No name, email or payment data in Supabase.
+    Note over App,DB: Codes: SHA-256 hashes only.<br/>Requests (email, optional WhatsApp):<br/>seen only by the buyer and the founder.
 ```
 
 ### Flowchart: the simulator
@@ -94,7 +97,7 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     I["Inputs: monthly checkers · pack and pass conversion · prices · checks per user · issuer cardholders"] --> L["lib/pricing.ts (the same assumptions file /pricing and the memo use)"]
-    L --> O["Monthly: revenue by plan − Mercado Pago fees − AI cost − upkeep hours"]
+    L --> O["Monthly: revenue by plan − payment fees (transfer MX$0; Mercado Pago only at scale) − AI cost − founder hours"]
     O --> Y[Annual = monthly × 12 · break-even checkers · 10:1 threshold per plan]
     Y --> SV{Signed in?}
     SV -- yes --> DBS[("byp_scenarios: name + inputs, own rows only (RLS)")]
@@ -112,7 +115,7 @@ If this slice works, the free check stays the honest default and paid checks fun
 
 ## 8. Scope cut (what I am NOT building this week)
 
-- **No in-app payments or webhooks.** Payment happens on the founder's Mercado Pago link; the founder issues a code by hand. Fine at 5 buyers; not at 500.
+- **No in-app payments or webhooks.** Payment happens person to person, by bank transfer or cash; the founder issues a code by hand. Fine at 5 buyers; not at 500 (then a Mercado Pago link, already priced in the simulator).
 - **No auto-renewing subscription.** The "monthly" plan is a 30-day pass that ends by itself.
 - **Return-window alerts are not sold.** They aren't built (Blueprint Condition 6).
 - **No issuer integration.** The issuer is a line on /pricing marked as a bet.
@@ -123,14 +126,15 @@ If this slice works, the free check stays the honest default and paid checks fun
 
 | Layer | Choice | Notes |
 |---|---|---|
-| App | Next.js 15 (App Router) + Tailwind v4 on Vercel | Same stack; repo `KaromBuilds/before-you-pay`, domain beforeyoupay.xyz |
+| App | Next.js 15 (App Router) + Tailwind v4 on Netlify (moved from Vercel this week) | Repo `KaromBuilds/before-you-pay`, domain beforeyoupay.xyz on Netlify DNS |
 | One source of truth | `lib/pricing.ts` | Plans, prices, fees, every assumption with M/S/A tag and source, `tenToOne()`, `simulate()`. Used by /pricing, /simulator and the /about memo, so the three can't disagree. |
 | Evidence | `lib/evidence.ts` | Pricing conversations, each in exactly one outcome column. Roles, never names (Condition 5). |
 | Free limit + codes | `lib/quota.ts` + Supabase `byp_codes` + RPC `byp_use_check` (security definer) | Codes stored as SHA-256 only; no table access through the public key. Switch: `FREE_LIMIT_ON`. |
 | Saved scenarios | Supabase `byp_scenarios` (RLS: own rows only) | Google sign-in (security floor #2); name ≤ 60 chars, numeric ranges validated in the browser and in SQL. |
-| Event log | `byp_events` + new events: pricing_view, plan clicks, gate_shown, code_ok/code_bad, scenario_saved | Still no personal data. |
+| Pack requests | Supabase `byp_pack_requests` behind Google sign-in (RLS: own rows; email taken from the sign-in token) | Optional WhatsApp, explicit consent, the buyer can delete it. Only the buyer and the founder see it. |
+| Event log | `byp_events_v2` (v1 kept as history): pricing_view, plan clicks, gate_shown, code_ok/code_bad, paid_check, pack_requested, scenario_saved | Insert-only with the public key; no personal data. |
 | AI | Gemini Flash-Lite reads the screenshot only | ≈US$0.003 per screenshot; the engine decides. |
-| Secrets | `GEMINI_API_KEY` in Vercel env only | Supabase publishable key is public by design; RLS protects rows. |
+| Secrets | `GEMINI_API_KEY` in Netlify env only (a new key; the old one stays locked in the paused Vercel team) | Supabase publishable key is public by design; RLS protects rows. |
 
 ## 10. Test plan
 
@@ -163,10 +167,17 @@ If this slice works, the free check stays the honest default and paid checks fun
 | T13 signed-out links | **Pass** | /pricing, /product, /simulator, /about open on beforeyoupay.xyz in a signed-out browser |
 
 **Bugs found and fixed:**
+
 1. **The site was down.** The first push failed on Vercel: the whole Hobby team is paused Nov 11–Dec 11 for another project's bandwidth. Moved hosting to Netlify (free), moved the domain's nameservers to Netlify DNS, and redeployed. beforeyoupay.xyz serves from Netlify with HTTPS.
 2. **Pricing comparison cut off on phones** (mechanical pass, live screenshot): the "Risk" column was off-screen. Replaced the table with cards. Redeployed (before/after screenshots).
 3. **Stale free-check status after Google sign-in:** the status line could say "1 left" when it was used, because the sign-in restore returned before reading the counter. Moved the read first. Redeployed.
 4. **Supabase flagged the first SQL as destructive** (it replaced a check constraint). Rewrote it so nothing is dropped: pricing events go to a new `byp_events_v2`; v1 stays as history.
 5. **Persona test (Rocío):** the gate asked for a code without saying how to get one. Fixed (see [`PERSONA_W14.md`](PERSONA_W14.md)). Redeployed.
+
+**What changed between this packet and the build** (the packet was committed before any code, commit `661434e`; this version matches what shipped):
+
+- Payment: the packet said "the founder's Mercado Pago link." The founder has no Mercado Pago account, so the pilot is paid by **bank transfer or cash**, person to person. Fees in the pilot are MX$0; Mercado Pago stays in the simulator as the at-scale option.
+- How a buyer asks: added an **in-app request** (Google sign-in, optional WhatsApp, consent, deletable) so the founder's email is not on the site.
+- Hosting: **Vercel → Netlify**, because Vercel paused the whole team until Dec 11.
 
 Pricing conversations: [`PRICING_W14.md`](PRICING_W14.md).
