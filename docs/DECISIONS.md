@@ -67,3 +67,13 @@
 - **Shadow clause in code:** `analyze()` takes only the cart and the rule. Test T5 asserts arity 2, deep-equal results in a free and a paid context, and that the checker calls `analyze(ex, rule)` and nothing else.
 - **Known limit:** the free counter lives in the browser (clearing it resets it) and `/api/extract` isn't metered server-side. Fine for a five-buyer pilot; not for scale.
 - **Hosting incident:** the push of the pricing build failed on Vercel with "Account is blocked." The whole `karombuilds` Hobby team is **paused from Nov 11 to Dec 11, 2026 for Fast Origin Transfer** caused by another project (a video downloader), so beforeyoupay.xyz showed "This deployment is temporarily paused." Paying for Vercel Pro would break the course's free-stack rule, so the venture moves to **Netlify (free)** with the same repo and the same domain. `netlify.toml` added; the screenshot reader now fits one 9 s deadline because Netlify functions may stop at 10 s.
+- **SQL without drops:** Supabase's editor flagged the first version as destructive (it replaced `byp_events`' check constraint), so pricing events now go to a new `byp_events_v2` and nothing is dropped. Ran clean; RLS verified from outside with the public key.
+- **Netlify setup:** project `dapper-cendol-c9f80c` (public visibility), `GEMINI_API_KEY` set by the founder as a secret in the Netlify UI (a new key; the old one stays locked in the paused Vercel project). The reader reads the fictional sample in 2.8 s.
+- **Domain:** Vercel's DNS editor is blocked too ("Your Team exceeded our fair use limits and has been blocked"), but the registrar setting still works: nameservers moved to Netlify DNS (dns1–4.p08.nsone.net), confirmed at the .xyz registry, and the domain was unassigned from the paused Vercel project. beforeyoupay.xyz now serves from Netlify with HTTPS.
+- **Mechanical pass:** live phone screenshot showed the "what you do today" table cut off → cards. Code review found the free-check status stale after the sign-in restore → fixed. Both redeployed.
+- **Persona test (Rocío, 51):** worst confusion was the gate asking for a code with no word on how to get one; she quit there. Fixed with three numbered steps, a green "Code active" line and plain plan labels. Redeployed.
+- **Live code tests** used separate test codes, never the ten pack codes or five pass codes kept for real buyers.
+- **Netlify's free plan can't hide the "Powered by Netlify" badge;** the footer got bottom padding so it never covers the links.
+
+## Tomorrow's first move
+- Send the five pack offers (script in `docs/PRICING_W14.md`), log every answer in `lib/evidence.ts` and `docs/PRICING_W14.md`, then record the demo on beforeyoupay.xyz.

@@ -149,3 +149,24 @@ If this slice works, the free check stays the honest default and paid checks fun
 | T11 | Ledger | Each entry counted in exactly one column; "paid" counts only real payments |
 | T12 | Memo = pricing = simulator | All three read the same numbers from `lib/pricing.ts` |
 | T13 | Signed-out links | /pricing, /simulator, /about open for someone not signed in |
+
+## 11. Test → fix → redeploy (this week)
+
+| # | Result | How |
+|---|---|---|
+| T1–T6, T9, T11, T12 | **Pass** (28/28 tests) | `npm test`: 10:1 thresholds, fees, simulator math and validation, identical free/paid answer, free limit, code format, ledger, one source of truth |
+| T5 shadow clause | **Pass** | `analyze()` has arity 2; free and paid runs deep-equal; the checker calls only `analyze(ex, rule)` |
+| T7 pack code, live | **Pass** | A test code (not one of the ten for sale): 4 → 3 → 2 → 1 → 0, then refused "used_up" |
+| T8 pass code, live | **Pass** | First use set the end date exactly 30 days later; later uses keep it |
+| T9/T10 RLS, live | **Pass** | Public key: `byp_codes`, `byp_scenarios`, `byp_pack_requests` all read `[]`; anonymous request insert → 401 (RLS); unknown code → "unknown"; bad format → "format" |
+| Reader on the new host | **Pass** | `/api/extract` on Netlify read the fictional sample in 2.8 s with gemini-3.5-flash-lite |
+| T13 signed-out links | **Pass** | /pricing, /product, /simulator, /about open on beforeyoupay.xyz in a signed-out browser |
+
+**Bugs found and fixed:**
+1. **The site was down.** The first push failed on Vercel: the whole Hobby team is paused Nov 11–Dec 11 for another project's bandwidth. Moved hosting to Netlify (free), moved the domain's nameservers to Netlify DNS, and redeployed. beforeyoupay.xyz serves from Netlify with HTTPS.
+2. **Pricing comparison cut off on phones** (mechanical pass, live screenshot): the "Risk" column was off-screen. Replaced the table with cards. Redeployed (before/after screenshots).
+3. **Stale free-check status after Google sign-in:** the status line could say "1 left" when it was used, because the sign-in restore returned before reading the counter. Moved the read first. Redeployed.
+4. **Supabase flagged the first SQL as destructive** (it replaced a check constraint). Rewrote it so nothing is dropped: pricing events go to a new `byp_events_v2`; v1 stays as history.
+5. **Persona test (Rocío):** the gate asked for a code without saying how to get one. Fixed (see [`PERSONA_W14.md`](PERSONA_W14.md)). Redeployed.
+
+Pricing conversations: [`PRICING_W14.md`](PRICING_W14.md).
