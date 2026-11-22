@@ -15,12 +15,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className="min-h-screen font-sans antialiased">
         <header className="sticky top-0 z-20 border-b border-line bg-white/95 backdrop-blur">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-            <Link href="/" className="whitespace-nowrap text-lg font-extrabold tracking-tight text-navy">
+          <div className="mx-auto flex max-w-3xl items-center justify-between gap-2 px-4 py-3 sm:gap-3">
+            <Link href="/" className="whitespace-nowrap text-base font-extrabold tracking-tight text-navy sm:text-lg">
               Before You Pay
             </Link>
-            <nav className="flex items-center gap-3 text-sm sm:gap-5">
+            <nav className="flex items-center gap-2.5 text-sm sm:gap-5">
               <Link href="/product" className="font-semibold text-navy hover:underline">Check</Link>
+              <Link href="/rules" className="text-mute hover:text-navy">Rules</Link>
               <Link href="/pricing" className="text-mute hover:text-navy">Pricing</Link>
               <Link href="/history" className="hidden text-mute hover:text-navy sm:inline">History</Link>
               <Link href="/about" className="hidden text-mute hover:text-navy sm:inline">About</Link>
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="mx-auto flex max-w-3xl flex-wrap justify-between gap-2 px-4 py-5 text-xs text-mute">
             <span>No store pays us. No affiliate links. We never recommend a product.</span>
             <span className="flex gap-3">
+              <Link href="/rules" className="hover:text-navy">Rules</Link>
               <Link href="/pricing" className="hover:text-navy">Pricing</Link>
               <Link href="/simulator" className="hover:text-navy">Simulator</Link>
               <Link href="/history" className="hover:text-navy">History</Link>

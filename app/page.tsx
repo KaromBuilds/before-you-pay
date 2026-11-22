@@ -21,6 +21,10 @@ export default function Home() {
           </Link>
         </div>
         <p className="mt-3 text-xs text-mute">1 full check a month is free. No account needed to check. <Link href="/pricing" className="underline">Plans</Link></p>
+        <p className="mt-2 text-sm text-mute">
+          Already bought and it doesn’t fit? <Link href="/rules#five-days" className="font-semibold text-navy underline">Your five days</Link> ·
+          {" "}<Link href="/rules" className="font-semibold text-navy underline">The rule desk</Link>
+        </p>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-3">

@@ -33,14 +33,14 @@ export default function AuthButton() {
     return (
       <button
         onClick={() => supabase!.auth.signOut()}
-        className="rounded-full border border-line px-3 py-1.5 text-xs text-mute hover:border-navy hover:text-navy"
+        className="whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs text-mute hover:border-navy hover:text-navy"
         title={user.email ?? ""}
       >
         Sign out
       </button>
     );
   return (
-    <button onClick={signIn} className="rounded-full border border-navy px-3 py-1.5 text-xs font-semibold text-navy hover:bg-navy hover:text-white">
+    <button onClick={signIn} className="whitespace-nowrap rounded-full border border-navy px-3 py-1.5 text-xs font-semibold text-navy hover:bg-navy hover:text-white">
       Sign in
     </button>
   );
