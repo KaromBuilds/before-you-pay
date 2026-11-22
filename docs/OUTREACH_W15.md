@@ -45,9 +45,12 @@ The people who answered the Week 14 pack offer and didn't say no: the classmate 
 
 | # | Role (no names) | Relation | Permission | Pieces sent | Date | What they said (short) | Action | Counts? |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Classmate who paid MX$60 in Buen Fin | Known (school) | | | | | | |
+| 1 | Classmate who paid MX$60 in Buen Fin | Known (school) | **Yes**, 14 min after the ask | Zara card (image + link), Your five days (link) | Nov 22 | "It's happened to me many times that I can't return something and the money is stuck." After the pieces: "With this I won't keep losing money." | **Opened both** on his phone, Zara first, five-days 12 s later, about 3 min after replying. No check, no store request, no share (yet). | Permission + 2 opens count. The praise and "won't keep losing money" don't (and the second one reads the desk as a guarantee it never makes). |
 | 2 | Buen Fin "yes", no payment | Known (WhatsApp contact) | | | | | | |
 | 3 | Buen Fin "yes", no payment | Known (WhatsApp contact) | | | | | | |
 | 4 | Buen Fin "yes", no payment | Known (WhatsApp contact) | | | | | | |
 
 **Anonymous site log for `src=wa`** (from `byp_content_events`, filled in after the batch): page views · piece opens · checks started · stores requested · shares.
+
+- Excluded as the founder's own clicks: visits `84uf6leg5k` and `dohfqyitp5` (desktop, Nov 22 15:56 local; I opened the links from WhatsApp on my Mac). Evidence: `docs/w15/wa_query_1_founder_clicks.png`.
+- Person 1: visits `ltgvux6jcx` (zara) and `3087ufu2lt` (five-days), phone, Nov 22 15:58 local. Evidence: `docs/w15/wa_query_2.png`, replies in `docs/w15/outreach_reply_1.png` and `outreach_reply_1b.png`.
