@@ -150,7 +150,15 @@ If this slice works, the rule desk becomes the Charter's vision: a public, dated
 
 ## 11. Test → fix → redeploy (this week)
 
-*Filled in after the build.*
+**Deploys:** (1) `964e8fe` the rule desk; (2) `79a2bc7` persona fix + the logged Buen Fin offers. Docs-only commits skip Netlify to save the free plan's 300 monthly credits.
+
+| # | Result |
+|---|---|
+| T1 | **Pass after a fix.** Bug 1 (mechanical, phone screenshot before the first deploy): with the new *Rules* link, the header's *Sign in* button wrapped onto two lines at 390 px. Fixed: smaller wordmark on phones, tighter gaps, `whitespace-nowrap`. |
+| T2, T3, T4, T5, T7 (unit), T9, T11 | **Pass:** 38 tests, `tsc`, ESLint (one old warning), production build. The "before" draft fails the lint with five named reasons. |
+| T6, T7 (live), T8 | **Bug 2, live:** "Ask for this store" answered *"That didn't go through"*: the two new tables didn't exist yet in Supabase. The form failed honestly (no fake "sent"). Pending: the founder signs in to Supabase so the SQL runs; then the live inserts, the refused select and the visit-id join are re-tested. |
+| T10 | **Pass, live:** the autopsy video plays inline and muted (H.264, 28.5 s, 673 KB). Screenshot: `docs/w15/t10_video_playing.png`. |
+| Persona | **Bug 3 (worst confusion), fixed and redeployed:** Diego, who already paid, had no path from the Zara card to what he could do now, and would quit. Store cards now link to *Your five days*, which moved right after the stores. See [`PERSONA_W15.md`](PERSONA_W15.md). |
 
 ## 12. Launch playbook
 
