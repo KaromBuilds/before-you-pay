@@ -156,6 +156,12 @@ function PieceCard({ piece: p, src, highlighted }: { piece: Piece; src: Src; hig
       )}
 
       <p className="mt-3 rounded-xl border border-navy px-4 py-3 text-sm font-semibold text-navy">Next step: {p.nextStep}</p>
+      {p.series === "store" && (
+        // Persona-test fix (Diego): someone who already paid had no path from a store's rule to what they can do now.
+        <a href="#five-days" className="mt-2 block rounded-xl bg-warn-bg px-4 py-3 text-sm font-semibold text-warn">
+          Already paid and it doesn’t fit? See your five days after delivery ↓
+        </a>
+      )}
 
       {p.source && (
         <p className="mt-3 text-xs text-mute">

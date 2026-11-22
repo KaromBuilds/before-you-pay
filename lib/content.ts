@@ -14,8 +14,9 @@ export type Format = "image" | "video" | "text";
 
 export const SERIES: { id: SeriesId; tag: string; blurb: string }[] = [
   { id: "store", tag: "What the store says", blurb: "A store's return rule in its own words, with the day we read it and the link." },
-  { id: "autopsy", tag: "Cart autopsy", blurb: "A fictional cart taken apart by the same engine you can run on your own." },
+  // Persona-test fix (Diego): the regret comes before the next cart, so "Your five days" now sits right after the stores.
   { id: "five-days", tag: "Your five days", blurb: "What Mexican law gives you after delivery, and how to use it calmly." },
+  { id: "autopsy", tag: "Cart autopsy", blurb: "A fictional cart taken apart by the same engine you can run on your own." },
 ];
 
 export interface Piece {
