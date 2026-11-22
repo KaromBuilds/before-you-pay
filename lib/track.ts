@@ -41,3 +41,30 @@ export function track(event: TrackEvent, opts: { ruleKnown?: boolean | null; lan
     .insert({ visit: visitId(), event, rule_known: opts.ruleKnown ?? null, lang: opts.lang ?? null, device })
     .then(() => {}, () => {});
 }
+
+// Week 15 · rule desk funnel. Same anonymous visit id as above, so a /rules visit and a later check can be joined
+// without knowing who anyone is. Stores only: event, piece id, channel (wa | share | direct), device.
+export type ContentEvent =
+  | "rules_view" | "piece_view" | "share" | "message_copied" | "card_opened" | "video_played" | "check_clicked" | "store_requested";
+
+export function trackContent(event: ContentEvent, opts: { piece?: string | null; src?: "wa" | "share" | "direct"; onlyOnce?: boolean } = {}) {
+  if (typeof window === "undefined" || !supabase) return;
+  const key = `c:${event}:${opts.piece ?? ""}`;
+  if (opts.onlyOnce) {
+    if (once.has(key)) return;
+    once.add(key);
+  }
+  const device = window.matchMedia?.("(max-width: 640px)").matches ? "phone" : "desktop";
+  const piece = opts.piece && /^[a-z0-9-]{1,24}$/.test(opts.piece) ? opts.piece : null;
+  supabase
+    .from("byp_content_events")
+    .insert({ visit: visitId(), event, piece, src: opts.src ?? "direct", device })
+    .then(() => {}, () => {});
+}
+
+/** "Ask for your store's rule": the store's name only. Returns false if the database refused it. */
+export async function requestStore(store: string, src: "wa" | "share" | "direct"): Promise<boolean> {
+  if (!supabase) return false;
+  const { error } = await supabase.from("byp_store_requests").insert({ store, src });
+  return !error;
+}
