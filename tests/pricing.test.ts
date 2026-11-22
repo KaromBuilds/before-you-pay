@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import {
   F, PLANS, PRESETS, PRICE_PER_CHECK, cleanInputs, paymentFee, simulate, tenToOneRatio, tenToOneThreshold, passMonthlyThreshold,
 } from "../lib/pricing.ts";
-import { CONVERSATIONS, tally } from "../lib/evidence.ts";
+import { received, CONVERSATIONS, tally } from "../lib/evidence.ts";
 import { freeLeftFrom, spendFreeFrom, normalizeCode, CODE_RE } from "../lib/quota.ts";
 import { analyze } from "../lib/engine.ts";
 import { RETURN_RULES } from "../lib/policies.ts";
@@ -83,10 +83,13 @@ test("W14-T9 code format: normalizes what people type, rejects lookalikes", () =
   assert.ok(CODE_RE.test("BYP-MRZ3-AKBN"));
 });
 
-test("W14-T11 ledger: each conversation in exactly one column; nothing paid yet", () => {
+test("W14-T11 ledger: each conversation in exactly one column; only paid rows carry money (updated Week 15)", () => {
   const t = tally();
   assert.equal(t.rejected + t.stated + t.requested + t.paid, CONVERSATIONS.length);
-  assert.equal(t.paid, 0);
+  // Week 15: the five Buen Fin offers were logged → 1 paid (MX$60), 3 said yes without paying, 1 no.
+  assert.equal(t.paid, 1);
+  assert.equal(received(), 60);
+  for (const c of CONVERSATIONS) if (c.outcome !== "paid") assert.equal(c.amount, undefined, `${c.id} has money but didn't pay`);
   for (const c of CONVERSATIONS) assert.ok(!/karom|asael/i.test(c.who), "roles, never names");
 });
 

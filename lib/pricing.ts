@@ -124,8 +124,8 @@ export interface SimInputs {
 
 export const INPUT_META: Record<Exclude<keyof SimInputs, "payment">, { label: string; min: number; max: number; step: number; pct?: boolean; tag: Tag; note: string }> = {
   checkers: { label: "People who run a real check each month", min: 0, max: 1_000_000, step: 50, tag: "A", note: "Not measured yet: the event log counts visits, not people." },
-  packConv: { label: "Buy a 4-check pack in a month", min: 0, max: 1, step: 0.005, pct: true, tag: "A", note: "Measured so far: 0 paid (see /pricing)." },
-  passConv: { label: "Buy a 30-day pass in a month", min: 0, max: 1, step: 0.005, pct: true, tag: "A", note: "Measured so far: 0 paid." },
+  packConv: { label: "Buy a 4-check pack in a month", min: 0, max: 1, step: 0.005, pct: true, tag: "A", note: "Measured so far: 1 pack paid out of 5 offers to known contacts (see /pricing). Not a user conversion rate." },
+  passConv: { label: "Buy a 30-day pass in a month", min: 0, max: 1, step: 0.005, pct: true, tag: "A", note: "Measured so far: 0 passes paid." },
   packPrice: { label: "Pack price (4 checks), MXN", min: 0, max: 1000, step: 5, tag: "M", note: "Price on /pricing." },
   passPrice: { label: "30-day pass price, MXN", min: 0, max: 1000, step: 1, tag: "M", note: "Price on /pricing." },
   checksPerPassUser: { label: "Checks a month by a pass user", min: 0, max: 200, step: 1, tag: "A", note: "A heavy buyer: ~30 purchases a year ≈ 2.5 a month, plus re-checks." },
@@ -149,7 +149,7 @@ const base = {
 };
 
 export const PRESETS: { id: string; name: string; note: string; inputs: SimInputs }[] = [
-  { id: "measured", name: "Measured so far", note: "0 paid. This is the only preset built on evidence.", inputs: { ...base, checkers: 50, packConv: 0, passConv: 0 } },
+  { id: "measured", name: "Measured so far", note: "1 pack paid (MX$60) out of 5 offers to known contacts, not to users, so conversion stays 0 here until users pay. The only preset built on evidence.", inputs: { ...base, checkers: 50, packConv: 0, passConv: 0 } },
   { id: "pessimistic", name: "Pessimistic", note: "Assumed.", inputs: { ...base, checkers: 100, packConv: 0.01, passConv: 0.005 } },
   { id: "base", name: "Base", note: "Assumed.", inputs: { ...base, checkers: 500, packConv: 0.03, passConv: 0.01 } },
   { id: "optimistic", name: "Optimistic", note: "Assumed.", inputs: { ...base, checkers: 2000, packConv: 0.06, passConv: 0.02, payment: "mp_link" } },

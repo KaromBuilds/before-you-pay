@@ -9,7 +9,7 @@ import {
   F, INPUT_META, PAYMENT_LABEL, PRESETS, TAG_LABEL, aiCostPerCheck, cleanInputs, money, paymentFee, simulate,
   type PaymentMethod, type SimInputs,
 } from "@/lib/pricing";
-import { tally } from "@/lib/evidence";
+import { received, tally } from "@/lib/evidence";
 import { signIn, useUser } from "./AuthButton";
 
 interface Scenario { id: string; name: string; created_at: string; inputs: SimInputs }
@@ -74,7 +74,7 @@ export default function Simulator() {
       <div>
         <h1 className="text-3xl font-extrabold text-navy">Revenue simulator</h1>
         <p className="mt-2 rounded-lg bg-navy px-3 py-2 text-center text-xs font-bold uppercase tracking-wide text-white">
-          Simulation: projections from assumptions, not revenue. Paid so far: {paid} · {money(0)}
+          Simulation: projections from assumptions, not revenue. Paid so far: {paid} · {money(received())}
         </p>
         <p className="mt-2 text-sm text-mute">Every number comes from the same file the pricing page and the 10:1 memo use. Change any assumption and the projection updates.</p>
       </div>

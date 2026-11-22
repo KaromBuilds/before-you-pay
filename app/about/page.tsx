@@ -77,7 +77,7 @@ export default function About() {
         </p>
         <p className="mt-2 rounded-lg bg-warn-bg px-3 py-2 text-sm text-warn">
           <b>What we don’t know yet.</b> The {Math.round(F.pSizeFails.value * 100)}% is a US proxy, not measured in Mexico. Avoided loss isn’t measured
-          either: we can’t yet see whether a buyer who waited would have gotten the wrong size. Nobody has paid so far. Until those are measured, this
+          either: we can’t yet see whether a buyer who waited would have gotten the wrong size. One person has paid (MX$60, a classmate who had lost money the same way): a signal, not recurring demand. Until those are measured, this
           10:1 is a hypothesis, not a fact.
         </p>
       </section>

@@ -20,6 +20,7 @@ export interface Conversation {
   outcome: Outcome;
   said: string;
   note?: string;
+  amount?: number; // MXN actually received (paid outcomes only)
 }
 
 export const CONVERSATIONS: Conversation[] = [
@@ -32,6 +33,37 @@ export const CONVERSATIONS: Conversation[] = [
     outcome: "stated",
     said: "She would pay up to MX$25 per check.",
     note: "A known person, so politeness is likely. No money changed hands. Her number is above the MX$15 price.",
+  },
+  // Week 14 declaration, done during Buen Fin (Nov 13–17) and reported on Nov 16: five WhatsApp offers of the pack.
+  // All five were WhatsApp contacts, so all count as "known" (politeness risk).
+  {
+    id: "p2",
+    date: "2026-11-16",
+    who: "Classmate (school, not close) · had lost money on a discounted online order",
+    relation: "known",
+    offer: "4-check pack, MX$60, paid by transfer",
+    outcome: "paid",
+    amount: 60,
+    said: "Same thing had happened to him; he wanted to try the service.",
+    note: "One purchase is a signal, not recurring demand (Team 5 Week 15 Condition 3).",
+  },
+  ...[3, 4, 5].map((n) => ({
+    id: `p${n}`,
+    date: "2026-11-16",
+    who: "WhatsApp contact · buys clothes online",
+    relation: "known" as const,
+    offer: "4-check pack, MX$60",
+    outcome: "stated" as const,
+    said: "Liked it: it had happened to them too and nobody advises them online. The price felt right. No money sent.",
+  })),
+  {
+    id: "p6",
+    date: "2026-11-16",
+    who: "WhatsApp contact",
+    relation: "known",
+    offer: "4-check pack, MX$60",
+    outcome: "rejected",
+    said: "No longer buys clothes online; prefers to buy in physical stores.",
   },
 ];
 
@@ -47,3 +79,7 @@ export function tally(list: Conversation[] = CONVERSATIONS): Record<Outcome, num
 
 /** Founder's own willingness to pay is kept out of every count (founder bias). */
 export const FOUNDER_EXCLUDED = "The founder's own answer (up to MX$100 a check) is not counted.";
+
+/** Money actually received, in MXN. Only "paid" rows count. */
+export const received = (list: Conversation[] = CONVERSATIONS) =>
+  list.reduce((sum, c) => sum + (c.outcome === "paid" ? c.amount ?? 0 : 0), 0);
