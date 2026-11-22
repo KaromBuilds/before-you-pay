@@ -238,4 +238,29 @@ Three finished (one per series), three formats (image, video, text), two tested 
 
 ### 12.7 The audience test: what I expected, what happened, what I'd change
 
-*Filled in after the two pieces are sent (see `OUTREACH_W15.md`).*
+**Who:** Batch 1, Nov 22. The four people who said yes to the Buen Fin offer (one of them paid MX$60). All known to me; logged by role, never by name. Two finished pieces sent: **S1-1 the Zara card** (image + link) and **S3-1 Your five days** (link). Full log and evidence: [`OUTREACH_W15.md`](OUTREACH_W15.md).
+
+| Step | What I expected (written before sending) | What happened |
+|---|---|---|
+| Permission | 3 of 4 say yes | **2 of 4** (the payer, 14 min; one "yes", 1 min). **2 no reply**, not messaged again. |
+| Opened the pieces | 2 of 3 open the link | **2 of 2 opened both pieces** on their phones, minutes after replying (4 opens in the anonymous log, `src=wa`). One open was **nudged** by me. |
+| Asked for their store | 1 | **0** |
+| Started a check | 0–1 | **0** |
+| Shared | — | **0** |
+| Praise | The most common reply | "Innovative", "perfect", "with this I won't keep losing money": logged, **not counted**. |
+
+My own clicks were excluded: two desktop visits at 3:56 pm were me opening the links on my Mac. The audience's opens are the phone visits that match the time of each reply.
+
+**What it means.** The method reaches people: both who answered opened both pieces within minutes. It doesn't yet move them: nobody reached a next action. Against Condition 3, this batch validates *attention from people who already know me*, not demand. Three things I didn't expect:
+
+1. **The link is a wall for some people.** Person 2 has a data plan that only covers WhatsApp and social apps. He asked if he had to open it now, and only opened it after someone shared data with him.
+2. **A dated rule was heard as a guarantee.** The payer answered "with this I won't keep losing money". The page never says that, and the lint blocks it. The reader added the promise himself, which is the shadow clause (Condition 4) from the buyer's side.
+3. **I was the only pressure in the batch.** When person 2 asked about opening it now, I said "preferably yes". It's logged as a nudged open.
+
+**What I'd change (Batch 2, already written in `OUTREACH_W15.md`):**
+
+- the message itself carries the rule, and the link is only its source;
+- one line in every send: *"this tells you the risk; it doesn't get your money back"*;
+- a next action that works inside WhatsApp ("reply with the store you buy from most");
+- send before a sale weekend or payday, not after one;
+- never answer "do I have to open it now?" with yes.

@@ -77,3 +77,17 @@
 
 ## Tomorrow's first move
 - Send the five pack offers (script in `docs/PRICING_W14.md`), log every answer in `lib/evidence.ts` and `docs/PRICING_W14.md`, then record the demo on beforeyoupay.xyz.
+
+
+## Week 15 · Session 1 (2026-11-22) — Distribution: the rule desk
+- **Packet before code** (`docs/PACKET.md`, commit 032b3d3); the packet is also the launch playbook (section 12). Week 14 packet archived in `docs/w14/`.
+- **Channel:** WhatsApp one-to-one, permission first, plus one page on my own domain (`/rules`). No social account: in two weeks a new profile gathers nobody, and the updated rules accept a shareable venture page with opt-in outreach.
+- **Content is data and is linted.** `lib/content.ts` holds the six concepts; a finished piece can't ship with pressure words, a promise, an ALL-CAPS word, no source or a date older than 30 days. The store cards are built from the same rule table the checker uses, so the two can't disagree (T4).
+- **Anonymous funnel:** `byp_content_events` and `byp_store_requests`, insert-only for the public key, no select policy. A per-tab visit id joins a `/rules` visit to a check started afterwards; `?src=wa|share` says which channel, never who.
+- **Honest failure messages:** when the reader is busy (429/503/quota/timeout) it answers 503 with "Try again in a minute. Your free check wasn't used."
+- **Deploys:** `964e8fe` (the rule desk) and `79a2bc7` (persona fix + Buen Fin ledger). Docs-only commits use `[skip netlify]`.
+- **Bug 2 fixed without a deploy:** I signed in to Supabase myself (GitHub, in my own Safari) and ran `supabase/w15.sql`; live T6, T7 and T8 then passed from the real domain.
+- **Batch 1 (Nov 22):** 4 asked → 2 yes, 2 no reply → both opened both pieces on their phones → 0 checks, 0 store requests, 0 shares. My own desktop clicks were excluded. Findings: a social-only data plan blocks links outside WhatsApp; one reader heard a guarantee the page never makes; my "preferably yes" was the only push.
+
+## Tomorrow's first move
+- If persons 3 or 4 reply, log it. Then send Batch 2 with the changes in `docs/OUTREACH_W15.md`: the rule inside the message, the "not a guarantee" line, "reply with your store", timed before the next sale weekend.
