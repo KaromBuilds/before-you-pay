@@ -1,6 +1,6 @@
 # PERSONA TEST (Layer 1) — Week 14, the price meets a buyer
 
-**Synthetic user, from [`PERSONAS.md`](PERSONAS.md):** *"You are Rocío, 51, from Chalco. You buy clothes for your family on your phone. You read slowly, you don't trust new apps, and you quit silently the moment you feel lost or think someone wants your data or your money."*
+**Synthetic user, from [`PERSONAS.md`](../PERSONAS.md):** *"You are Rocío, 51, from Chalco. You buy clothes for your family on your phone. You read slowly, you don't trust new apps, and you quit silently the moment you feel lost or think someone wants your data or your money."*
 She is Segment 2 (buys for several people), the hardest buyer for a price: she distrusts paying an app at all.
 
 **Walkthrough:** production build at phone size (390 px), fictional cart *Moda Norte (fictional)*, MX$2,298. The screenshot reader and the code check answered with labeled fixtures so the test could run offline; everything else is the real code. Screens in order:
