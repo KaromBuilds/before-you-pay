@@ -142,7 +142,7 @@ export default function Checker() {
     try {
       j = JSON.parse(text);
     } catch {
-      return { error: "The reader is busy or timed out. Try again in a moment, or try the fictional sample." };
+      return { error: "The reader is busy or timed out. Try again in a minute, or try the fictional sample. Your free check wasn't used." };
     }
     if (r.status === 503 && j.error === "no_key") return { error: "no_key", noKey: true };
     if (!r.ok) return { error: j.error || "Something went wrong." };

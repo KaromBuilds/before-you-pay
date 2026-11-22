@@ -1,3 +1,4 @@
+import { BUSY_MESSAGE, isBusy } from "@/lib/busy";
 import { NextResponse } from "next/server";
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Category, Extraction, Item } from "@/lib/types";
@@ -133,7 +134,10 @@ export async function POST(req: Request) {
     }
     throw lastErr;
   } catch (e) {
-    console.error("extract failed", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "We couldn't read that screenshot. Try a clearer one or use the demo." }, { status: 502 });
+    const msg = e instanceof Error ? `${e.name} ${e.message}` : String(e);
+    console.error("extract failed", msg.slice(0, 300));
+    // Week 15 (Operator brief): a rate limit or a timeout is OUR capacity problem, not the buyer's screenshot.
+    if (isBusy(msg)) return NextResponse.json({ error: BUSY_MESSAGE }, { status: 503, headers: { "retry-after": "60" } });
+    return NextResponse.json({ error: "We couldn't read that screenshot. Try one that shows the items and the total. Your free check wasn't used." }, { status: 502 });
   }
 }
