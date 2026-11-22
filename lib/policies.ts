@@ -13,8 +13,9 @@ export const RETURN_RULES: ReturnRule[] = [
     status: "advertised",
     source: "zara.com/mx · Help center: How to return",
     sourceUrl: "https://www.zara.com/mx/es/help-center/HowToReturn",
-    checkedAt: "2026-11-01",
-    note: "30 days from the shipping date, items in original condition with all tags. The page does not say whether discounted items can be returned; it points to separate 'special return conditions'.",
+    // Week 15 · re-checked for the rule desk (S1-1). Same wording as Nov 1; only the date moves.
+    checkedAt: "2026-11-22",
+    note: "30 days from the shipping date, items in original condition with all tags, returned in the same country. The page does not say whether discounted items can be returned; it only links to separate 'special return conditions'.",
   },
   {
     store: "El Palacio de Hierro",
